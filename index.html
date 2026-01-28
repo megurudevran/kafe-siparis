@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kafe Sipariş</title>
 
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#121212">
 
 <style>
@@ -19,6 +18,15 @@ body {
 h2 {
   text-align:center;
   padding:10px;
+}
+
+#temaBtn {
+  padding:8px 14px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#eee;
+  color:#000;
 }
 
 .panel {
@@ -48,7 +56,7 @@ h2 {
 .container {
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:20px; /* kartlar arası boşluk */
+  gap:22px;
   padding:15px;
 }
 
@@ -57,7 +65,7 @@ h2 {
 
 .card {
   background:#1e1e1e;
-  padding:18px;              /* kart büyütüldü */
+  padding:20px;
   border-radius:14px;
   box-shadow:0 6px 12px rgba(0,0,0,0.6);
 }
@@ -71,7 +79,7 @@ h2 {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin:14px 0;             /* ürünler arası boşluk */
+  margin:14px 0;
   padding-bottom:8px;
   border-bottom:1px dashed #333;
 }
@@ -111,12 +119,51 @@ h2 {
   margin-top:10px;
   border-radius:8px;
 }
+
+/* ---------- AÇIK TEMA ---------- */
+.light body {
+  background:#f2f2f2;
+  color:#111;
+}
+
+.light .card,
+.light .panel {
+  background:#ffffff;
+  color:#111;
+}
+
+.light .item {
+  border-bottom:1px dashed #bbb;
+}
+
+.light input {
+  background:#eee;
+  color:#000;
+}
+
+.light .item button {
+  background:#ddd;
+  color:#000;
+}
+
+.light .clear {
+  background:#d32f2f;
+}
+
+.light #temaBtn {
+  background:#222;
+  color:#fff;
+}
 </style>
 </head>
 
 <body>
 
 <h2>Kafe Sipariş</h2>
+
+<div style="text-align:center; margin-bottom:10px;">
+  <button id="temaBtn" onclick="temaDegistir()">🌙 Koyu Tema</button>
+</div>
 
 <div class="panel">
   <input id="urunAdi" placeholder="Ürün adı">
@@ -167,7 +214,7 @@ function olustur(){
       <button class="clear" onclick="temizle(${m})">Temizle</button>
     </div>`;
   }
-  document.getElementById("container").innerHTML = html;
+  container.innerHTML = html;
   kaydet();
 }
 
@@ -212,7 +259,6 @@ function urunEkle(){
 
 function urunSil(key){
   if(!confirm("Ürün silinsin mi?")) return;
-
   delete urunler[key];
   for(let m=1;m<=masaSayisi;m++){
     delete veriler[m][key];
@@ -220,6 +266,20 @@ function urunSil(key){
   olustur();
 }
 
+/* -------- TEMA -------- */
+function temaDegistir(){
+  let acikMi = document.documentElement.classList.toggle("light");
+  localStorage.setItem("tema", acikMi ? "light" : "dark");
+  temaYukle();
+}
+
+function temaYukle(){
+  let tema = localStorage.getItem("tema") || "dark";
+  document.documentElement.classList.toggle("light", tema === "light");
+  temaBtn.innerText = tema === "light" ? "🌙 Koyu Tema" : "☀️ Açık Tema";
+}
+
+temaYukle();
 olustur();
 </script>
 
