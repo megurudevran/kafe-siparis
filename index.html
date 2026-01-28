@@ -6,75 +6,98 @@
 <title>Kafe Sipariş</title>
 
 <style>
-:root{
-  --bg:#121212;
-  --card:#1e1e1e;
-  --text:#eee;
-}
-body.light{
-  --bg:#f4f4f4;
-  --card:#ffffff;
-  --text:#000;
-}
 body{
-  background:var(--bg);
-  color:var(--text);
+  font-family:Arial,sans-serif;
+  background:#121212;
+  color:#eee;
   margin:0;
-  font-family:Arial;
+  transition:.3s;
 }
 h2,h3{text-align:center}
 
+/* AÇIK TEMA */
+body.acik{background:#f2f2f2;color:#111}
+body.acik .card,
+body.acik .panel,
+body.acik #gunluk{background:#fff;color:#111}
+body.acik .item{border-bottom:1px dashed #bbb}
+body.acik input{background:#eee;color:#000}
+
+/* TEMA */
+#temaBtn{
+  padding:8px 16px;
+  border:none;
+  border-radius:20px;
+}
+
+/* PANEL */
 .panel{
+  background:#1e1e1e;
+  padding:12px;
   display:flex;
   gap:8px;
-  padding:10px;
   flex-wrap:wrap;
   justify-content:center;
 }
-.panel input,button{
+.panel input{
   padding:8px;
+  background:#2a2a2a;
   border:none;
+  color:#fff;
   border-radius:6px;
 }
-.panel button{background:#4caf50;color:#fff}
-.themeBtn{background:#ff9800;color:#000}
+.panel button{
+  padding:8px 12px;
+  background:#4caf50;
+  border:none;
+  color:#fff;
+  border-radius:6px;
+}
 
+/* KARTLAR */
 .container{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
   gap:20px;
   padding:15px;
 }
 .card{
-  background:var(--card);
-  padding:15px;
+  background:#1e1e1e;
+  padding:20px;
   border-radius:14px;
 }
 
+/* ÜRÜN */
 .item{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  margin:8px 0;
+  margin:10px 0;
+  border-bottom:1px dashed #333;
+  touch-action:none;
 }
-.drag{
-  font-size:18px;
-  padding-right:6px;
-  user-select:none;
-  touch-action:manipulation; /* ÖNEMLİ */
-}
-.item-controls button{
+.item.dragging{opacity:.4}
+.item button{
   background:#333;
   color:#fff;
+  border:none;
   border-radius:5px;
+  padding:4px 8px;
 }
 
-.total{margin-top:10px;font-weight:bold}
-.save{background:#1976d2;color:#fff;width:100%;margin-top:6px}
-.clear{background:#c62828;color:#fff;width:100%;margin-top:6px}
+.saveBtn,.clear{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  margin-top:8px;
+  color:#fff;
+}
+.saveBtn{background:#1976d2}
+.clear{background:#c62828}
 
-#kayitlar{
-  background:var(--card);
+/* GÜNLÜK */
+#gunluk{
+  background:#1a1a1a;
   margin:15px;
   padding:15px;
   border-radius:12px;
@@ -82,182 +105,205 @@ h2,h3{text-align:center}
 .kayit{
   display:flex;
   justify-content:space-between;
-  border-bottom:1px dashed #555;
+  align-items:center;
+  border-bottom:1px dashed #444;
   padding:6px 0;
 }
 .kayit button{
-  background:#c62828;
+  background:#b71c1c;
+  border:none;
   color:#fff;
-  border-radius:5px;
+  border-radius:6px;
+  padding:4px 8px;
+}
+.tarihBaslik{
+  margin-top:12px;
+  font-weight:bold;
+}
+.ciro{
+  color:#4caf50;
+  font-weight:bold;
+  margin-bottom:6px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>☕ Kafe Sipariş</h2>
+<h2>Kafe Sipariş</h2>
+<div style="text-align:center;margin-bottom:10px;">
+  <button id="temaBtn" onclick="temaDegistir()">☀️ Açık Tema</button>
+</div>
 
 <div class="panel">
   <input id="urunAdi" placeholder="Ürün adı">
   <input id="urunFiyat" type="number" placeholder="Fiyat">
   <button onclick="urunEkle()">Ürün Ekle</button>
-  <button class="themeBtn" onclick="temaDegis()">Tema</button>
 </div>
 
 <div class="container" id="container"></div>
 
-<div id="kayitlar">
-  <h3>📊 Günlük Kayıt</h3>
-  <input type="date" id="tarihAra">
-  <button onclick="tariheGore()">Ara</button>
-  <button onclick="tumunuGoster()">Tümü</button>
-  <div id="ciro"></div>
-  <div id="liste"></div>
+<!-- GÜNLÜK KAYIT -->
+<div id="gunluk">
+  <h3>📊 Günlük Kayıtlar</h3>
+  <div id="gunlukListe"></div>
 </div>
 
 <script>
-const masalar=[
-  ...Array.from({length:16},(_,i)=>"Masa "+(i+1)),
-  "Kapı Önü","Yeni","Cam"
-];
+const masaSayisi=16;
 
-let urunSirasi=JSON.parse(localStorage.getItem("urunSirasi"))||["cay","tost","icecek"];
-let urunler={
+/* VERİLER */
+let urunler=JSON.parse(localStorage.getItem("urunler"))||{
   cay:{ad:"Çay",fiyat:20},
   tost:{ad:"Tost",fiyat:170},
   icecek:{ad:"İçecek",fiyat:70}
 };
-let siparis=JSON.parse(localStorage.getItem("siparis"))||{};
-let kayitlar=JSON.parse(localStorage.getItem("kayitlar"))||[];
+let urunSira=JSON.parse(localStorage.getItem("urunSira"))||Object.keys(urunler);
+let veriler=JSON.parse(localStorage.getItem("veriler"))||{};
+let gunluk=JSON.parse(localStorage.getItem("gunluk"))||[];
 
-function today(){return new Date().toISOString().split("T")[0];}
-function kaydet(){
-  localStorage.setItem("siparis",JSON.stringify(siparis));
-  localStorage.setItem("kayitlar",JSON.stringify(kayitlar));
-  localStorage.setItem("urunSirasi",JSON.stringify(urunSirasi));
+/* TEMA */
+let tema=localStorage.getItem("tema")||"koyu";
+function temaUygula(){
+  document.body.classList.toggle("acik",tema==="acik");
+  temaBtn.innerText=tema==="acik"?"🌙 Koyu Tema":"☀️ Açık Tema";
 }
-function toplam(m){
-  return urunSirasi.reduce((t,k)=>t+(siparis[m][k]||0)*urunler[k].fiyat,0);
+function temaDegistir(){
+  tema=tema==="koyu"?"acik":"koyu";
+  localStorage.setItem("tema",tema);
+  temaUygula();
 }
 
-let dragKey=null;
-let holdTimer=null;
-let dragActive=false;
+/* LOCAL */
+function kaydetLS(){
+  localStorage.setItem("urunler",JSON.stringify(urunler));
+  localStorage.setItem("urunSira",JSON.stringify(urunSira));
+  localStorage.setItem("veriler",JSON.stringify(veriler));
+  localStorage.setItem("gunluk",JSON.stringify(gunluk));
+}
 
-function ciz(){
-  container.innerHTML="";
-  masalar.forEach(m=>{
-    siparis[m]=siparis[m]||{};
-    let h=`<div class="card"><h4>${m}</h4>`;
-    urunSirasi.forEach(k=>{
-      siparis[m][k]=siparis[m][k]||0;
+/* HESAP */
+function hesapla(m){
+  let t=0;
+  urunSira.forEach(k=>t+=(veriler[m][k]||0)*urunler[k].fiyat);
+  return t;
+}
+
+/* OLUŞTUR */
+function olustur(){
+  let h="";
+  for(let m=1;m<=masaSayisi;m++){
+    veriler[m]=veriler[m]||{};
+    h+=`<div class="card"><h4>Masa ${m}</h4>`;
+    urunSira.forEach(k=>{
+      veriler[m][k]=veriler[m][k]||0;
       h+=`
-      <div class="item">
-        <span class="drag"
-          ontouchstart="holdStart(event,'${k}')"
-          ontouchmove="dragMove(event)"
-          ontouchend="holdEnd()">≡</span>
+      <div class="item" data-key="${k}"
+        ontouchstart="basla(event,this)"
+        ontouchmove="surukle(event)"
+        ontouchend="birak(event,this)">
         ${urunler[k].ad}
-        <div class="item-controls">
-          <button onclick="degis('${m}','${k}',-1)">-</button>
-          ${siparis[m][k]}
-          <button onclick="degis('${m}','${k}',1)">+</button>
+        <div>
+          <button onclick="degistir(${m},'${k}',-1)">-</button>
+          ${veriler[m][k]}
+          <button onclick="degistir(${m},'${k}',1)">+</button>
         </div>
       </div>`;
     });
     h+=`
-    <div class="total">Toplam: ${toplam(m)} TL</div>
-    <button class="save" onclick="kaydetGunluk('${m}')">Kaydet</button>
-    <button class="clear" onclick="temizle('${m}')">Temizle</button>
+      <div>Toplam: ${hesapla(m)} TL</div>
+      <button class="saveBtn" onclick="kaydetGunluk(${m})">💾 Kaydet</button>
+      <button class="clear" onclick="temizle(${m})">Temizle</button>
     </div>`;
-    container.innerHTML+=h;
-  });
-  kaydet();
+  }
+  container.innerHTML=h;
+  gunlukGoster();
+  kaydetLS();
 }
 
-function holdStart(e,k){
-  holdTimer=setTimeout(()=>{
-    dragKey=k;
-    dragActive=true;
-  },500);
-}
-
-function holdEnd(){
-  clearTimeout(holdTimer);
-  dragKey=null;
-  dragActive=false;
-}
-
-function dragMove(e){
-  if(!dragActive) return;
-  e.preventDefault(); // 🔴 ASIL DÜZELTME BU
-  let y=e.touches[0].clientY;
-  let items=[...document.querySelectorAll(".item")];
-
-  items.forEach((el,i)=>{
-    let r=el.getBoundingClientRect();
-    if(y>r.top && y<r.bottom){
-      let targetKey=urunSirasi[i];
-      let a=urunSirasi.indexOf(dragKey);
-      let b=i;
-      if(a!==b){
-        urunSirasi.splice(b,0,urunSirasi.splice(a,1)[0]);
-        ciz();
-      }
-    }
-  });
-}
-
-function degis(m,k,d){
-  siparis[m][k]=Math.max(0,(siparis[m][k]||0)+d);
-  ciz();
+/* ARTTIR */
+function degistir(m,k,d){
+  veriler[m][k]=Math.max(0,(veriler[m][k]||0)+d);
+  olustur();
 }
 function temizle(m){
-  urunSirasi.forEach(k=>siparis[m][k]=0);
-  ciz();
+  urunSira.forEach(k=>veriler[m][k]=0);
+  olustur();
 }
-function kaydetGunluk(m){
-  let t=toplam(m);
-  if(!t)return;
-  kayitlar.push({tarih:today(),masa:m,toplam:t});
-  temizle(m);
-  goster(kayitlar);
-}
-function goster(l){
-  liste.innerHTML="";
-  let t=0;
-  l.forEach((k,i)=>{
-    t+=k.toplam;
-    liste.innerHTML+=`
-    <div class="kayit">
-      ${k.tarih} - ${k.masa} <b>${k.toplam} TL</b>
-      <button onclick="sil(${i})">Sil</button>
-    </div>`;
-  });
-  ciro.innerText="Toplam Ciro: "+t+" TL";
-}
-function sil(i){
-  kayitlar.splice(i,1);
-  kaydet();
-  goster(kayitlar);
-}
-function tariheGore(){
-  goster(kayitlar.filter(k=>k.tarih===tarihAra.value));
-}
-function tumunuGoster(){goster(kayitlar);}
-function urunEkle(){
-  let a=urunAdi.value,f=+urunFiyat.value;
-  if(!a||!f)return;
-  let k=a.toLowerCase().replace(/\s+/g,"");
-  urunler[k]={ad:a,fiyat:f};
-  urunSirasi.push(k);
-  urunAdi.value=urunFiyat.value="";
-  ciz();
-}
-function temaDegis(){document.body.classList.toggle("light");}
 
-ciz();
-goster(kayitlar);
+/* GÜNLÜK */
+function today(){
+  return new Date().toISOString().split("T")[0];
+}
+
+function kaydetGunluk(m){
+  let t=hesapla(m);
+  if(!t)return;
+  gunluk.push({tarih:today(),masa:m,tutar:t});
+  temizle(m);
+}
+
+function gunlukGoster(){
+  gunlukListe.innerHTML="";
+  let gruplu={};
+
+  gunluk.forEach((k,i)=>{
+    if(!gruplu[k.tarih])gruplu[k.tarih]=[];
+    gruplu[k.tarih].push({...k,index:i});
+  });
+
+  Object.keys(gruplu).reverse().forEach(t=>{
+    let toplam=gruplu[t].reduce((a,b)=>a+b.tutar,0);
+    gunlukListe.innerHTML+=`
+      <div class="tarihBaslik">📅 ${t}</div>
+      <div class="ciro">Toplam Ciro: ${toplam} TL</div>`;
+    gruplu[t].forEach(k=>{
+      gunlukListe.innerHTML+=`
+      <div class="kayit">
+        Masa ${k.masa} — ${k.tutar} TL
+        <button onclick="silKayit(${k.index})">🗑️</button>
+      </div>`;
+    });
+  });
+}
+
+/* KAYIT SİL */
+function silKayit(i){
+  if(!confirm("Bu kayıt silinsin mi?"))return;
+  gunluk.splice(i,1);
+  kaydetLS();
+  gunlukGoster();
+}
+
+/* ÜRÜN EKLE */
+function urunEkle(){
+  let ad=urunAdi.value.trim();
+  let fiyat=+urunFiyat.value;
+  if(!ad||!fiyat)return;
+  let key=ad.toLowerCase().replace(/\s+/g,"");
+  urunler[key]={ad,fiyat};
+  urunSira.push(key);
+  urunAdi.value=urunFiyat.value="";
+  olustur();
+}
+
+/* SÜRÜKLE */
+let basY=0;
+function basla(e,el){basY=e.touches[0].clientY;el.classList.add("dragging")}
+function surukle(e){e.preventDefault()}
+function birak(e,el){
+  el.classList.remove("dragging");
+  let f=e.changedTouches[0].clientY-basY;
+  if(Math.abs(f)<30)return;
+  let k=el.dataset.key,i=urunSira.indexOf(k);
+  if(f<0&&i>0)[urunSira[i],urunSira[i-1]]=[urunSira[i-1],urunSira[i]];
+  if(f>0&&i<urunSira.length-1)[urunSira[i],urunSira[i+1]]=[urunSira[i+1],urunSira[i]];
+  olustur();
+}
+
+/* BAŞLAT */
+temaUygula();
+olustur();
 </script>
 
 </body>
