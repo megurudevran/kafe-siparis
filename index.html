@@ -5,154 +5,75 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kafe Sipariş</title>
 
-<meta name="theme-color" content="#121212">
-
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background:#121212;
-  color:#eee;
-  margin:0;
-}
+body{font-family:Arial,sans-serif;background:#121212;color:#eee;margin:0}
+h2,h3{text-align:center}
 
-h2 {
-  text-align:center;
-  padding:10px;
-}
+/* PANEL */
+.panel{background:#1e1e1e;padding:12px;display:flex;gap:8px;flex-wrap:wrap}
+.panel input{padding:8px;background:#2a2a2a;border:none;color:#fff;border-radius:6px}
+.panel button{padding:8px 12px;background:#4caf50;border:none;color:#fff;border-radius:6px}
 
-#temaBtn {
-  padding:8px 14px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  background:#eee;
-  color:#000;
-}
-
-.panel {
-  background:#1e1e1e;
-  padding:12px;
+/* FİLTRE */
+.filtre{
   display:flex;
   gap:8px;
+  padding:10px;
+  justify-content:center;
   flex-wrap:wrap;
 }
-
-.panel input {
+.filtre input,.filtre button{
   padding:8px;
-  background:#2a2a2a;
   border:none;
-  color:#fff;
   border-radius:6px;
 }
+.filtre button{background:#1976d2;color:#fff}
 
-.panel button {
-  padding:8px 12px;
-  background:#4caf50;
-  border:none;
-  color:#fff;
-  border-radius:6px;
-}
-
-.container {
+/* KARTLAR */
+.container{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:22px;
   padding:15px;
 }
-
-@media(max-width:900px){ .container{grid-template-columns:repeat(2,1fr);} }
-@media(max-width:500px){ .container{grid-template-columns:1fr;} }
-
-.card {
-  background:#1e1e1e;
-  padding:20px;
-  border-radius:14px;
-  box-shadow:0 6px 12px rgba(0,0,0,0.6);
+@media(min-width:768px) and (max-width:1024px){
+  .container{grid-template-columns:repeat(5,1fr)}
+}
+@media(max-width:767px){
+  .container{grid-template-columns:1fr}
 }
 
-.card h4 {
-  margin-top:0;
-  font-size:18px;
-}
+.card{background:#1e1e1e;padding:20px;border-radius:14px}
+.item{display:flex;justify-content:space-between;margin:10px 0;border-bottom:1px dashed #333}
+.item button{background:#333;color:#fff;border:none;border-radius:5px;padding:4px 8px}
+.total{margin-top:10px;font-size:16px}
 
-.item {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:14px 0;
-  padding-bottom:8px;
-  border-bottom:1px dashed #333;
+.clear,.saveBtn{
+  width:100%;padding:10px;border:none;border-radius:8px;margin-top:8px;color:#fff
 }
+.clear{background:#c62828}
+.saveBtn{background:#1976d2}
 
-.item button {
-  padding:4px 8px;
-  background:#333;
-  color:#fff;
-  border:none;
-  border-radius:5px;
+/* GÜNLÜK */
+#gunluk{
+  background:#1a1a1a;
+  padding:15px;
+  margin:15px;
+  border-radius:12px;
 }
+.kayit{display:flex;justify-content:space-between;border-bottom:1px dashed #444;padding:6px 0}
+.tarihBaslik{margin-top:14px;font-weight:bold}
+.ciro{margin:4px 0 8px 0;color:#4caf50;font-weight:bold}
 
-.item span {
-  margin:0 6px;
-  min-width:20px;
-  display:inline-block;
-  text-align:center;
-}
-
-.item small {
-  color:#ff5252;
-  cursor:pointer;
-  margin-left:6px;
-}
-
-.total {
-  font-size:16px;
-  margin-top:10px;
-}
-
-.clear {
+/* RESET */
+#resetGunluk{
   width:100%;
-  background:#c62828;
+  padding:12px;
+  background:#b71c1c;
   color:#fff;
   border:none;
-  padding:10px;
+  border-radius:10px;
   margin-top:10px;
-  border-radius:8px;
-}
-
-/* ---------- AÇIK TEMA ---------- */
-.light body {
-  background:#f2f2f2;
-  color:#111;
-}
-
-.light .card,
-.light .panel {
-  background:#ffffff;
-  color:#111;
-}
-
-.light .item {
-  border-bottom:1px dashed #bbb;
-}
-
-.light input {
-  background:#eee;
-  color:#000;
-}
-
-.light .item button {
-  background:#ddd;
-  color:#000;
-}
-
-.light .clear {
-  background:#d32f2f;
-}
-
-.light #temaBtn {
-  background:#222;
-  color:#fff;
 }
 </style>
 </head>
@@ -160,10 +81,6 @@ h2 {
 <body>
 
 <h2>Kafe Sipariş</h2>
-
-<div style="text-align:center; margin-bottom:10px;">
-  <button id="temaBtn" onclick="temaDegistir()">🌙 Koyu Tema</button>
-</div>
 
 <div class="panel">
   <input id="urunAdi" placeholder="Ürün adı">
@@ -173,113 +90,149 @@ h2 {
 
 <div class="container" id="container"></div>
 
+<!-- TARİH FİLTRE -->
+<div class="filtre">
+  <input type="date" id="tarihSec">
+  <button onclick="filtrele()">🔍 Filtrele</button>
+  <button onclick="tumunuGoster()">📋 Tümünü Göster</button>
+</div>
+
+<div id="gunluk">
+  <h3>📊 Tarihli Kayıt & Ciro</h3>
+  <div id="gunlukListe"></div>
+  <button id="resetGunluk" onclick="gunlukReset()">🗑️ Bugünü Sıfırla</button>
+</div>
+
 <script>
-const masaSayisi = 16;
+const masaSayisi=16;
 
-let urunler = JSON.parse(localStorage.getItem("urunler")) || {
-  cay:{ad:"Çay", fiyat:20},
-  tost:{ad:"Tost", fiyat:170},
-  icecek:{ad:"İçecek", fiyat:70}
+let urunler=JSON.parse(localStorage.getItem("urunler"))||{
+  cay:{ad:"Çay",fiyat:20},
+  tost:{ad:"Tost",fiyat:170},
+  icecek:{ad:"İçecek",fiyat:70}
 };
+let veriler=JSON.parse(localStorage.getItem("veriler"))||{};
+let gunluk=JSON.parse(localStorage.getItem("gunluk"))||[];
 
-let veriler = JSON.parse(localStorage.getItem("veriler")) || {};
-
-function kaydet(){
-  localStorage.setItem("urunler", JSON.stringify(urunler));
-  localStorage.setItem("veriler", JSON.stringify(veriler));
+function today(){
+  return new Date().toISOString().split("T")[0];
 }
 
-function olustur(){
-  let html = "";
-  for(let m=1;m<=masaSayisi;m++){
-    veriler[m] = veriler[m] || {};
-    html += `<div class="card"><h4>Masa ${m}</h4>`;
-
-    for(let k in urunler){
-      veriler[m][k] = veriler[m][k] || 0;
-      html += `
-      <div class="item">
-        ${urunler[k].ad} (${urunler[k].fiyat} TL)
-        <div>
-          <button onclick="degistir(${m},'${k}',-1)">-</button>
-          <span id="${k}${m}">${veriler[m][k]}</span>
-          <button onclick="degistir(${m},'${k}',1)">+</button>
-          <small onclick="urunSil('${k}')">❌</small>
-        </div>
-      </div>`;
-    }
-
-    html += `
-      <div class="total">Toplam: <span id="toplam${m}">${hesapla(m)}</span> TL</div>
-      <button class="clear" onclick="temizle(${m})">Temizle</button>
-    </div>`;
-  }
-  container.innerHTML = html;
-  kaydet();
-}
-
-function degistir(m,k,d){
-  veriler[m][k] = Math.max(0, veriler[m][k] + d);
-  document.getElementById(k+m).innerText = veriler[m][k];
-  document.getElementById("toplam"+m).innerText = hesapla(m);
-  kaydet();
+function kaydetLS(){
+  localStorage.setItem("urunler",JSON.stringify(urunler));
+  localStorage.setItem("veriler",JSON.stringify(veriler));
+  localStorage.setItem("gunluk",JSON.stringify(gunluk));
 }
 
 function hesapla(m){
-  let t = 0;
-  for(let k in urunler){
-    t += (veriler[m][k] || 0) * urunler[k].fiyat;
-  }
+  let t=0;
+  for(let k in urunler)t+=(veriler[m][k]||0)*urunler[k].fiyat;
   return t;
 }
 
-function temizle(m){
-  for(let k in urunler){
-    veriler[m][k] = 0;
+function olustur(){
+  let html="";
+  for(let m=1;m<=masaSayisi;m++){
+    veriler[m]=veriler[m]||{};
+    html+=`<div class="card"><h4>Masa ${m}</h4>`;
+    for(let k in urunler){
+      veriler[m][k]=veriler[m][k]||0;
+      html+=`
+      <div class="item">
+        ${urunler[k].ad}
+        <div>
+          <button onclick="degistir(${m},'${k}',-1)">-</button>
+          ${veriler[m][k]}
+          <button onclick="degistir(${m},'${k}',1)">+</button>
+        </div>
+      </div>`;
+    }
+    html+=`
+    <div class="total">Toplam: ${hesapla(m)} TL</div>
+    <button class="saveBtn" onclick="gunlukKaydet(${m})">💾 Kaydet</button>
+    <button class="clear" onclick="temizle(${m})">Temizle</button>
+    </div>`;
   }
+  container.innerHTML=html;
+  gunlukGoster();
+  kaydetLS();
+}
+
+function degistir(m,k,d){
+  veriler[m][k]=Math.max(0,(veriler[m][k]||0)+d);
   olustur();
+}
+
+function temizle(m){
+  for(let k in urunler)veriler[m][k]=0;
+  olustur();
+}
+
+/* KAYIT */
+function gunlukKaydet(m){
+  let tutar=hesapla(m);
+  if(tutar===0)return alert("Tutar 0");
+  gunluk.push({
+    tarih:today(),
+    masa:m,
+    tutar,
+    saat:new Date().toLocaleTimeString()
+  });
+  temizle(m);
+}
+
+/* GÖSTER / FİLTRE */
+function gunlukGoster(liste=gunluk){
+  gunlukListe.innerHTML="";
+  let gruplu={};
+
+  liste.forEach(k=>{
+    gruplu[k.tarih]=gruplu[k.tarih]||{toplam:0,kayitlar:[]};
+    gruplu[k.tarih].toplam+=k.tutar;
+    gruplu[k.tarih].kayitlar.push(k);
+  });
+
+  Object.keys(gruplu).sort().reverse().forEach(t=>{
+    gunlukListe.innerHTML+=`
+      <div class="tarihBaslik">📅 ${t}</div>
+      <div class="ciro">Toplam Ciro: ${gruplu[t].toplam} TL</div>
+    `;
+    gruplu[t].kayitlar.forEach(k=>{
+      gunlukListe.innerHTML+=
+      `<div class="kayit">Masa ${k.masa} <b>${k.tutar} TL</b> (${k.saat})</div>`;
+    });
+  });
+}
+
+function filtrele(){
+  let t=tarihSec.value;
+  if(!t)return alert("Tarih seç");
+  gunlukGoster(gunluk.filter(k=>k.tarih===t));
+}
+
+function tumunuGoster(){
+  gunlukGoster(gunluk);
+}
+
+/* RESET */
+function gunlukReset(){
+  if(!confirm("Bugünün kayıtları silinsin mi?"))return;
+  gunluk=gunluk.filter(k=>k.tarih!==today());
+  kaydetLS();
+  gunlukGoster();
 }
 
 function urunEkle(){
-  let ad = urunAdi.value.trim();
-  let fiyat = Number(urunFiyat.value);
-  if(!ad || !fiyat) return alert("Ürün adı ve fiyat gir");
-
-  let key = ad.toLowerCase().replace(/\s+/g,"");
-  urunler[key] = { ad, fiyat };
-
-  for(let m=1;m<=masaSayisi;m++){
-    veriler[m][key] = 0;
-  }
-
-  urunAdi.value = "";
-  urunFiyat.value = "";
+  let ad=urunAdi.value.trim();
+  let fiyat=+urunFiyat.value;
+  if(!ad||!fiyat)return;
+  let key=ad.toLowerCase().replace(/\s+/g,"");
+  urunler[key]={ad,fiyat};
+  for(let m=1;m<=masaSayisi;m++)veriler[m][key]=0;
+  urunAdi.value=urunFiyat.value="";
   olustur();
 }
 
-function urunSil(key){
-  if(!confirm("Ürün silinsin mi?")) return;
-  delete urunler[key];
-  for(let m=1;m<=masaSayisi;m++){
-    delete veriler[m][key];
-  }
-  olustur();
-}
-
-/* -------- TEMA -------- */
-function temaDegistir(){
-  let acikMi = document.documentElement.classList.toggle("light");
-  localStorage.setItem("tema", acikMi ? "light" : "dark");
-  temaYukle();
-}
-
-function temaYukle(){
-  let tema = localStorage.getItem("tema") || "dark";
-  document.documentElement.classList.toggle("light", tema === "light");
-  temaBtn.innerText = tema === "light" ? "🌙 Koyu Tema" : "☀️ Açık Tema";
-}
-
-temaYukle();
 olustur();
 </script>
 
