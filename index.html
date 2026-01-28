@@ -1,22 +1,66 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ffffff">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kafe Sipariş</title>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
+
 <style>
 body { font-family: Arial; background:#f2f2f2; margin:0; }
 h2 { text-align:center; }
-.container { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:10px; }
+
+.panel {
+  background:#fff;
+  padding:10px;
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+}
+
+.panel input, .panel button {
+  padding:6px;
+}
+
+.container {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  padding:10px;
+}
+
 @media(max-width:900px){ .container{grid-template-columns:repeat(2,1fr);} }
 @media(max-width:500px){ .container{grid-template-columns:1fr;} }
 
-.card { background:#fff; padding:10px; border-radius:8px; }
-.item { display:flex; justify-content:space-between; margin:5px 0; }
-.clear { width:100%; background:crimson; color:#fff; border:none; padding:6px; }
+.card {
+  background:#fff;
+  padding:10px;
+  border-radius:8px;
+}
+
+.item {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:5px 0;
+}
+
+.item small {
+  color:red;
+  cursor:pointer;
+  margin-left:6px;
+}
+
+.clear {
+  width:100%;
+  background:crimson;
+  color:#fff;
+  border:none;
+  padding:6px;
+  margin-top:6px;
+}
 </style>
 </head>
 
@@ -24,80 +68,106 @@ h2 { text-align:center; }
 
 <h2>Kafe Sipariş</h2>
 
-<div style="padding:10px;background:#fff">
-<input id="urunAdi" placeholder="Ürün adı">
-<input id="urunFiyat" type="number" placeholder="Fiyat">
-<button onclick="urunEkle()">Ürün Ekle</button>
+<div class="panel">
+  <input id="urunAdi" placeholder="Ürün adı">
+  <input id="urunFiyat" type="number" placeholder="Fiyat">
+  <button onclick="urunEkle()">Ürün Ekle</button>
 </div>
 
 <div class="container" id="container"></div>
 
 <script>
 const masaSayisi = 16;
+
 let urunler = JSON.parse(localStorage.getItem("urunler")) || {
-    cay:{ad:"Çay",fiyat:20},
-    tost:{ad:"Tost",fiyat:170},
-    icecek:{ad:"İçecek",fiyat:70}
+  cay:{ad:"Çay", fiyat:20},
+  tost:{ad:"Tost", fiyat:170},
+  icecek:{ad:"İçecek", fiyat:70}
 };
 
 let veriler = JSON.parse(localStorage.getItem("veriler")) || {};
 
-function kaydet() {
-    localStorage.setItem("veriler", JSON.stringify(veriler));
-    localStorage.setItem("urunler", JSON.stringify(urunler));
+function kaydet(){
+  localStorage.setItem("urunler", JSON.stringify(urunler));
+  localStorage.setItem("veriler", JSON.stringify(veriler));
 }
 
-function olustur() {
-    let html = "";
-    for(let m=1;m<=masaSayisi;m++){
-        html+=`<div class="card"><h4>Masa ${m}</h4>`;
-        veriler[m] = veriler[m] || {};
+function olustur(){
+  let html = "";
+  for(let m=1;m<=masaSayisi;m++){
+    veriler[m] = veriler[m] || {};
+    html += `<div class="card"><h4>Masa ${m}</h4>`;
 
-        for(let k in urunler){
-            veriler[m][k] = veriler[m][k] || 0;
-            html+=`
-            <div class="item">
-            ${urunler[k].ad} (${urunler[k].fiyat} TL)
-            <div>
-            <button onclick="degistir(${m},'${k}',-1)">-</button>
-            <span id="${k}${m}">${veriler[m][k]}</span>
-            <button onclick="degistir(${m},'${k}',1)">+</button>
-            </div></div>`;
-        }
-
-        html+=`
-        <b>Toplam: <span id="toplam${m}">${hesapla(m)}</span> TL</b>
-        <button class="clear" onclick="temizle(${m})">Temizle</button>
-        </div>`;
+    for(let k in urunler){
+      veriler[m][k] = veriler[m][k] || 0;
+      html += `
+      <div class="item">
+        ${urunler[k].ad} (${urunler[k].fiyat} TL)
+        <div>
+          <button onclick="degistir(${m},'${k}',-1)">-</button>
+          <span id="${k}${m}">${veriler[m][k]}</span>
+          <button onclick="degistir(${m},'${k}',1)">+</button>
+          <small onclick="urunSil('${k}')">❌</small>
+        </div>
+      </div>`;
     }
-    document.getElementById("container").innerHTML = html;
-    kaydet();
+
+    html += `
+      <b>Toplam: <span id="toplam${m}">${hesapla(m)}</span> TL</b>
+      <button class="clear" onclick="temizle(${m})">Temizle</button>
+    </div>`;
+  }
+  document.getElementById("container").innerHTML = html;
+  kaydet();
 }
 
 function degistir(m,k,d){
-    veriler[m][k]=Math.max(0,veriler[m][k]+d);
-    document.getElementById(k+m).innerText=veriler[m][k];
-    document.getElementById("toplam"+m).innerText=hesapla(m);
-    kaydet();
+  veriler[m][k] = Math.max(0, veriler[m][k] + d);
+  document.getElementById(k+m).innerText = veriler[m][k];
+  document.getElementById("toplam"+m).innerText = hesapla(m);
+  kaydet();
 }
 
 function hesapla(m){
-    let t=0;
-    for(let k in urunler){ t+=veriler[m][k]*urunler[k].fiyat; }
-    return t;
+  let t = 0;
+  for(let k in urunler){
+    t += (veriler[m][k] || 0) * urunler[k].fiyat;
+  }
+  return t;
 }
 
 function temizle(m){
-    for(let k in urunler){ veriler[m][k]=0; }
-    olustur();
+  for(let k in urunler){
+    veriler[m][k] = 0;
+  }
+  olustur();
 }
 
 function urunEkle(){
-    let ad=urunAdi.value, fiyat=urunFiyat.value;
-    if(!ad||!fiyat) return alert("Eksik bilgi");
-    let key=ad.toLowerCase().replace(/\s/g,"");
-    urunler[key]={ad,fiyat:Number(fiyat)};
-    olustur();
+  let ad = urunAdi.value.trim();
+  let fiyat = Number(urunFiyat.value);
+  if(!ad || !fiyat) return alert("Ürün adı ve fiyat gir");
+
+  let key = ad.toLowerCase().replace(/\s+/g,"");
+  urunler[key] = { ad, fiyat };
+
+  for(let m=1;m<=masaSayisi;m++){
+    veriler[m][key] = 0;
+  }
+
+  urunAdi.value = "";
+  urunFiyat.value = "";
+  olustur();
+}
+
+function urunSil(key){
+  if(!confirm("Ürün silinsin mi?")) return;
+
+  delete urunler[key];
+  for(let m=1;m<=masaSayisi;m++){
+    delete veriler[m][key];
+  }
+  olustur();
 }
 
 olustur();
