@@ -2,77 +2,86 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kafe Sipariş</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kafe Takip</title>
 
 <style>
-body{font-family:Arial,sans-serif;background:#121212;color:#eee;margin:0}
-h2,h3{text-align:center}
-
-/* PANEL */
-.panel{background:#1e1e1e;padding:12px;display:flex;gap:8px;flex-wrap:wrap}
-.panel input{padding:8px;background:#2a2a2a;border:none;color:#fff;border-radius:6px}
-.panel button{padding:8px 12px;background:#4caf50;border:none;color:#fff;border-radius:6px}
-
-/* FİLTRE */
-.filtre{
-  display:flex;
-  gap:8px;
-  padding:10px;
-  justify-content:center;
-  flex-wrap:wrap;
+:root{
+  --bg:#121212;
+  --card:#1e1e1e;
+  --text:#fff;
 }
-.filtre input,.filtre button{
-  padding:8px;
+
+.light{
+  --bg:#f2f2f2;
+  --card:#fff;
+  --text:#111;
+}
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:var(--bg);
+  color:var(--text);
+}
+
+h2{text-align:center;}
+
+button{
   border:none;
-  border-radius:6px;
+  border-radius:8px;
+  padding:8px 12px;
 }
-.filtre button{background:#1976d2;color:#fff}
 
-/* KARTLAR */
+#temaBtn{
+  display:block;
+  margin:10px auto;
+}
+
 .container{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:22px;
-  padding:15px;
-}
-@media(min-width:768px) and (max-width:1024px){
-  .container{grid-template-columns:repeat(5,1fr)}
-}
-@media(max-width:767px){
-  .container{grid-template-columns:1fr}
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  padding:16px;
 }
 
-.card{background:#1e1e1e;padding:20px;border-radius:14px}
-.item{display:flex;justify-content:space-between;margin:10px 0;border-bottom:1px dashed #333}
-.item button{background:#333;color:#fff;border:none;border-radius:5px;padding:4px 8px}
-.total{margin-top:10px;font-size:16px}
-
-.clear,.saveBtn{
-  width:100%;padding:10px;border:none;border-radius:8px;margin-top:8px;color:#fff
+.card{
+  background:var(--card);
+  padding:16px;
+  border-radius:14px;
 }
-.clear{background:#c62828}
-.saveBtn{background:#1976d2}
 
-/* GÜNLÜK */
-#gunluk{
-  background:#1a1a1a;
-  padding:15px;
-  margin:15px;
-  border-radius:12px;
+.item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:14px 0;
+  padding-bottom:8px;
+  border-bottom:1px dashed #666;
+  cursor:grab;
 }
-.kayit{display:flex;justify-content:space-between;border-bottom:1px dashed #444;padding:6px 0}
-.tarihBaslik{margin-top:14px;font-weight:bold}
-.ciro{margin:4px 0 8px 0;color:#4caf50;font-weight:bold}
 
-/* RESET */
-#resetGunluk{
-  width:100%;
-  padding:12px;
+.item button{
+  margin-left:4px;
+}
+
+.sil{
   background:#b71c1c;
   color:#fff;
+}
+
+input{
+  width:100%;
+  padding:8px;
+  margin-top:6px;
+  border-radius:8px;
   border:none;
-  border-radius:10px;
+}
+
+.clear{
+  background:#b71c1c;
+  color:#fff;
+  width:100%;
   margin-top:10px;
 }
 </style>
@@ -81,159 +90,105 @@ h2,h3{text-align:center}
 <body>
 
 <h2>Kafe Sipariş</h2>
+<button id="temaBtn" onclick="temaDegistir()">🌙 Koyu Tema</button>
 
-<div class="panel">
-  <input id="urunAdi" placeholder="Ürün adı">
+<div style="padding:16px;">
+  <input id="urunAd" placeholder="Ürün adı">
   <input id="urunFiyat" type="number" placeholder="Fiyat">
-  <button onclick="urunEkle()">Ürün Ekle</button>
+  <button onclick="urunEkle()">➕ Ürün Ekle</button>
 </div>
 
-<div class="container" id="container"></div>
-
-<!-- TARİH FİLTRE -->
-<div class="filtre">
-  <input type="date" id="tarihSec">
-  <button onclick="filtrele()">🔍 Filtrele</button>
-  <button onclick="tumunuGoster()">📋 Tümünü Göster</button>
-</div>
-
-<div id="gunluk">
-  <h3>📊 Tarihli Kayıt & Ciro</h3>
-  <div id="gunlukListe"></div>
-  <button id="resetGunluk" onclick="gunlukReset()">🗑️ Bugünü Sıfırla</button>
-</div>
+<div class="container" id="urunler"></div>
 
 <script>
-const masaSayisi=16;
+let urunler = JSON.parse(localStorage.getItem("urunler")) || [];
 
-let urunler=JSON.parse(localStorage.getItem("urunler"))||{
-  cay:{ad:"Çay",fiyat:20},
-  tost:{ad:"Tost",fiyat:170},
-  icecek:{ad:"İçecek",fiyat:70}
-};
-let veriler=JSON.parse(localStorage.getItem("veriler"))||{};
-let gunluk=JSON.parse(localStorage.getItem("gunluk"))||[];
+function urunleriYaz(){
+  let alan = document.getElementById("urunler");
+  alan.innerHTML = "";
 
-function today(){
-  return new Date().toISOString().split("T")[0];
-}
+  urunler.forEach((u,i)=>{
+    let div = document.createElement("div");
+    div.className="item";
+    div.draggable=true;
+    div.dataset.index=i;
 
-function kaydetLS(){
-  localStorage.setItem("urunler",JSON.stringify(urunler));
-  localStorage.setItem("veriler",JSON.stringify(veriler));
-  localStorage.setItem("gunluk",JSON.stringify(gunluk));
-}
-
-function hesapla(m){
-  let t=0;
-  for(let k in urunler)t+=(veriler[m][k]||0)*urunler[k].fiyat;
-  return t;
-}
-
-function olustur(){
-  let html="";
-  for(let m=1;m<=masaSayisi;m++){
-    veriler[m]=veriler[m]||{};
-    html+=`<div class="card"><h4>Masa ${m}</h4>`;
-    for(let k in urunler){
-      veriler[m][k]=veriler[m][k]||0;
-      html+=`
-      <div class="item">
-        ${urunler[k].ad}
-        <div>
-          <button onclick="degistir(${m},'${k}',-1)">-</button>
-          ${veriler[m][k]}
-          <button onclick="degistir(${m},'${k}',1)">+</button>
-        </div>
-      </div>`;
-    }
-    html+=`
-    <div class="total">Toplam: ${hesapla(m)} TL</div>
-    <button class="saveBtn" onclick="gunlukKaydet(${m})">💾 Kaydet</button>
-    <button class="clear" onclick="temizle(${m})">Temizle</button>
-    </div>`;
-  }
-  container.innerHTML=html;
-  gunlukGoster();
-  kaydetLS();
-}
-
-function degistir(m,k,d){
-  veriler[m][k]=Math.max(0,(veriler[m][k]||0)+d);
-  olustur();
-}
-
-function temizle(m){
-  for(let k in urunler)veriler[m][k]=0;
-  olustur();
-}
-
-/* KAYIT */
-function gunlukKaydet(m){
-  let tutar=hesapla(m);
-  if(tutar===0)return alert("Tutar 0");
-  gunluk.push({
-    tarih:today(),
-    masa:m,
-    tutar,
-    saat:new Date().toLocaleTimeString()
-  });
-  temizle(m);
-}
-
-/* GÖSTER / FİLTRE */
-function gunlukGoster(liste=gunluk){
-  gunlukListe.innerHTML="";
-  let gruplu={};
-
-  liste.forEach(k=>{
-    gruplu[k.tarih]=gruplu[k.tarih]||{toplam:0,kayitlar:[]};
-    gruplu[k.tarih].toplam+=k.tutar;
-    gruplu[k.tarih].kayitlar.push(k);
-  });
-
-  Object.keys(gruplu).sort().reverse().forEach(t=>{
-    gunlukListe.innerHTML+=`
-      <div class="tarihBaslik">📅 ${t}</div>
-      <div class="ciro">Toplam Ciro: ${gruplu[t].toplam} TL</div>
+    div.innerHTML=`
+      <span>${u.ad} (${u.fiyat}₺) → ${u.adet||0}</span>
+      <div>
+        <button onclick="arttir(${i})">+</button>
+        <button onclick="azalt(${i})">-</button>
+        <button class="sil" onclick="urunSil(${i})">🗑</button>
+      </div>
     `;
-    gruplu[t].kayitlar.forEach(k=>{
-      gunlukListe.innerHTML+=
-      `<div class="kayit">Masa ${k.masa} <b>${k.tutar} TL</b> (${k.saat})</div>`;
-    });
+    alan.appendChild(div);
   });
+
+  localStorage.setItem("urunler",JSON.stringify(urunler));
 }
 
-function filtrele(){
-  let t=tarihSec.value;
-  if(!t)return alert("Tarih seç");
-  gunlukGoster(gunluk.filter(k=>k.tarih===t));
+function arttir(i){
+  urunler[i].adet = (urunler[i].adet||0)+1;
+  urunleriYaz();
 }
 
-function tumunuGoster(){
-  gunlukGoster(gunluk);
-}
-
-/* RESET */
-function gunlukReset(){
-  if(!confirm("Bugünün kayıtları silinsin mi?"))return;
-  gunluk=gunluk.filter(k=>k.tarih!==today());
-  kaydetLS();
-  gunlukGoster();
+function azalt(i){
+  if(urunler[i].adet>0) urunler[i].adet--;
+  urunleriYaz();
 }
 
 function urunEkle(){
-  let ad=urunAdi.value.trim();
-  let fiyat=+urunFiyat.value;
-  if(!ad||!fiyat)return;
-  let key=ad.toLowerCase().replace(/\s+/g,"");
-  urunler[key]={ad,fiyat};
-  for(let m=1;m<=masaSayisi;m++)veriler[m][key]=0;
-  urunAdi.value=urunFiyat.value="";
-  olustur();
+  let ad = urunAd.value.trim();
+  let fiyat = Number(urunFiyat.value);
+  if(!ad || !fiyat) return;
+  urunler.push({ad,fiyat,adet:0});
+  urunAd.value="";
+  urunFiyat.value="";
+  urunleriYaz();
 }
 
-olustur();
+function urunSil(i){
+  if(confirm("Silinsin mi?")){
+    urunler.splice(i,1);
+    urunleriYaz();
+  }
+}
+
+/* SÜRÜKLE BIRAK */
+let suruklenen=null;
+
+document.addEventListener("dragstart",e=>{
+  if(e.target.classList.contains("item")){
+    suruklenen=e.target.dataset.index;
+  }
+});
+
+document.addEventListener("dragover",e=>e.preventDefault());
+
+document.addEventListener("drop",e=>{
+  if(e.target.classList.contains("item")){
+    let hedef=e.target.dataset.index;
+    [urunler[suruklenen],urunler[hedef]] =
+    [urunler[hedef],urunler[suruklenen]];
+    urunleriYaz();
+  }
+});
+
+/* TEMA */
+function temaDegistir(){
+  let acik = document.documentElement.classList.toggle("light");
+  localStorage.setItem("tema",acik?"light":"dark");
+  temaYukle();
+}
+
+function temaYukle(){
+  let t = localStorage.getItem("tema")||"dark";
+  document.documentElement.classList.toggle("light",t==="light");
+  temaBtn.innerText = t==="light" ? "🌙 Koyu Tema" : "☀️ Açık Tema";
+}
+
+temaYukle();
+urunleriYaz();
 </script>
 
 </body>
