@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kafe Pro - Tablet/Telefon Yönetim Sistemi</title>
+    <title>Kafe Pro - Tablet Yönetim Sistemi</title>
     <style>
         * {
             margin: 0;
@@ -25,65 +25,6 @@
         .container {
             display: flex;
             height: 100vh;
-        }
-
-        /* Görünüm Modları */
-        .container.phone-mode {
-            flex-direction: column;
-        }
-
-        .container.phone-mode .sidebar {
-            width: 100%;
-            height: 80px;
-            flex-direction: row;
-            overflow-x: auto;
-            overflow-y: hidden;
-            padding: 10px;
-            gap: 10px;
-        }
-
-        .container.phone-mode .sidebar h2 {
-            display: none;
-        }
-
-        .container.phone-mode .table-btn {
-            min-width: 100px;
-            margin-bottom: 0;
-            padding: 12px;
-        }
-
-        .container.phone-mode .add-table-btn {
-            min-width: 50px;
-            margin-top: 0;
-        }
-
-        .container.phone-mode .management-btns {
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            justify-content: center;
-        }
-
-        .container.phone-mode .order-section {
-            width: 100%;
-            position: fixed;
-            bottom: 70px;
-            left: 0;
-            right: 0;
-            height: 50vh;
-            z-index: 50;
-            border-left: none;
-            border-top: 2px solid rgba(255,255,255,0.1);
-            transform: translateY(100%);
-            transition: transform 0.3s;
-        }
-
-        .container.phone-mode .order-section.open {
-            transform: translateY(0);
-        }
-
-        .container.phone-mode .products-section {
-            padding-bottom: 100px;
         }
 
         /* Sidebar - Masalar */
@@ -196,32 +137,6 @@
             margin: 0;
         }
 
-        .header-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .view-toggle {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.3);
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s;
-        }
-
-        .view-toggle:active {
-            transform: scale(0.95);
-            background: rgba(233, 69, 96, 0.3);
-            border-color: #e94560;
-        }
-
         .stats-container {
             display: flex;
             gap: 15px;
@@ -282,11 +197,6 @@
             gap: 18px;
             margin-bottom: 20px;
             padding-bottom: 80px;
-        }
-
-        .container.phone-mode .products-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
         }
 
         .product-card {
@@ -364,29 +274,6 @@
             border-left: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
-        }
-
-        .order-toggle {
-            display: none;
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #e94560, #ff6b6b);
-            border: none;
-            color: #fff;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
-            z-index: 60;
-        }
-
-        .container.phone-mode .order-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .order-header {
@@ -703,6 +590,7 @@
             border-radius: 12px;
             border-left: 4px solid #e94560;
             position: relative;
+            padding-right: 50px;
         }
 
         .order-record-header {
@@ -743,21 +631,25 @@
             background: #ff4444;
             border: none;
             color: #fff;
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0.7;
             transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .delete-order-btn:hover {
-            opacity: 1;
+            background: #ff6666;
             transform: scale(1.1);
+        }
+
+        .delete-order-btn:active {
+            transform: scale(0.95);
         }
 
         .clear-all-btn {
@@ -772,11 +664,20 @@
             font-size: 16px;
             font-weight: 600;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .clear-all-btn:hover {
+            background: rgba(255, 68, 68, 0.2);
         }
 
         .clear-all-btn:active {
             background: #ff4444;
             color: #fff;
+            transform: scale(0.98);
         }
 
         .no-data {
@@ -950,7 +851,6 @@
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.3s;
-            z-index: 200;
         }
 
         .drag-hint.show {
@@ -972,19 +872,10 @@
                 left: 220px;
             }
         }
-
-        @media (max-width: 768px) {
-            .container:not(.phone-mode) .sidebar {
-                width: 180px;
-            }
-            .container:not(.phone-mode) .order-section {
-                width: 280px;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="container" id="mainContainer">
+    <div class="container">
         <!-- Sidebar - Masalar -->
         <div class="sidebar">
             <h2>🪑 Masalar</h2>
@@ -996,12 +887,6 @@
         <div class="main-content">
             <div class="header">
                 <h1 id="currentTableName">Masa Seçin</h1>
-                <div class="header-controls">
-                    <button class="view-toggle" onclick="toggleViewMode()">
-                        <span id="viewModeIcon">📱</span>
-                        <span id="viewModeText">Telefon Modu</span>
-                    </button>
-                </div>
                 <div class="stats-container">
                     <div class="stat-box">
                         <label>Bugünkü Ciro</label>
@@ -1025,7 +910,7 @@
                 </div>
 
                 <!-- Order Section -->
-                <div class="order-section" id="orderSection">
+                <div class="order-section">
                     <div class="order-header">
                         <h2>Sipariş Detayı</h2>
                         <p>Masa: <span id="selectedTableDisplay">-</span></p>
@@ -1047,9 +932,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Phone Mode Order Toggle -->
-    <button class="order-toggle" id="orderToggle" onclick="toggleOrderPanel()">🛒</button>
 
     <!-- Management Buttons -->
     <div class="management-btns">
@@ -1100,7 +982,10 @@
             </div>
 
             <div id="dailyReport" class="report-content active">
-                <button class="clear-all-btn" onclick="clearDailyOrders()">🗑️ Bugünkü Tüm Siparişleri Sil</button>
+                <button class="clear-all-btn" onclick="clearDailyOrders()">
+                    <span>🗑️</span>
+                    <span>Bugünkü Tüm Siparişleri Sil</span>
+                </button>
                 <div class="summary-cards">
                     <div class="summary-card">
                         <h3>Bugün Toplam</h3>
@@ -1116,7 +1001,10 @@
             </div>
 
             <div id="weeklyReport" class="report-content">
-                <button class="clear-all-btn" onclick="clearWeeklyOrders()">🗑️ Haftalık Tüm Siparişleri Sil</button>
+                <button class="clear-all-btn" onclick="clearWeeklyOrders()">
+                    <span>🗑️</span>
+                    <span>Haftalık Tüm Siparişleri Sil</span>
+                </button>
                 <div class="summary-cards">
                     <div class="summary-card">
                         <h3>Haftalık Toplam</h3>
@@ -1132,7 +1020,10 @@
             </div>
 
             <div id="allReport" class="report-content">
-                <button class="clear-all-btn" onclick="clearAllOrders()">🗑️ Tüm Sipariş Geçmişini Sil</button>
+                <button class="clear-all-btn" onclick="clearAllOrders()">
+                    <span>🗑️</span>
+                    <span>Tüm Sipariş Geçmişini Sil</span>
+                </button>
                 <div class="summary-cards">
                     <div class="summary-card">
                         <h3>Genel Toplam</h3>
@@ -1178,16 +1069,11 @@
         let dailyRevenue = 0;
         let currentTable = null;
         let draggedProduct = null;
+        let touchStartY = 0;
+        let touchStartX = 0;
         let orderHistory = [];
-        let isPhoneMode = false;
 
-        // Silinecek kahve ürünleri
-        const coffeeProductsToRemove = [
-            'espresso', 'cappuccino', 'türk kahvesi', 'latte', 
-            'americano', 'mocha', 'filtre kahve', 'türk kahvecsi'
-        ];
-
-        // Yeni ürün listesi - Kahveler hariç
+        // Yeni ürün listesi
         const defaultProducts = [
             { id: 1, name: 'Çay', price: 20 },
             { id: 2, name: 'Oralet', price: 20 },
@@ -1222,44 +1108,7 @@
             if (tables.length > 0 && !currentTable) {
                 selectTable(tables[0].id);
             }
-
-            checkScreenSize();
-            window.addEventListener('resize', checkScreenSize);
         };
-
-        function checkScreenSize() {
-            if (window.innerWidth <= 768 && !isPhoneMode) {
-                toggleViewMode(true);
-            }
-        }
-
-        // Görünüm modu değiştirme
-        function toggleViewMode(forcePhone = false) {
-            const container = document.getElementById('mainContainer');
-            const icon = document.getElementById('viewModeIcon');
-            const text = document.getElementById('viewModeText');
-            
-            if (forcePhone) {
-                isPhoneMode = true;
-            } else {
-                isPhoneMode = !isPhoneMode;
-            }
-            
-            if (isPhoneMode) {
-                container.classList.add('phone-mode');
-                icon.textContent = '💻';
-                text.textContent = 'Tablet Modu';
-            } else {
-                container.classList.remove('phone-mode');
-                icon.textContent = '📱';
-                text.textContent = 'Telefon Modu';
-                document.getElementById('orderSection').classList.remove('open');
-            }
-        }
-
-        function toggleOrderPanel() {
-            document.getElementById('orderSection').classList.toggle('open');
-        }
 
         // Local Storage Functions
         function saveData() {
@@ -1282,10 +1131,12 @@
             
             const today = new Date().toDateString();
             
+            // Sipariş geçmişini yükle
             if (savedHistory) {
                 orderHistory = JSON.parse(savedHistory);
             }
             
+            // Yeni gün kontrolü
             if (lastResetDate !== today) {
                 if (lastResetDate) {
                     const yesterday = new Date(lastResetDate);
@@ -1304,6 +1155,7 @@
                 orders = savedOrders ? JSON.parse(savedOrders) : {};
             }
             
+            // Masaları yükle
             if (savedTables) {
                 tables = JSON.parse(savedTables);
             } else {
@@ -1320,19 +1172,17 @@
                 }
             }
             
+            // Ürünleri yükle
             if (savedProducts) {
                 products = JSON.parse(savedProducts);
-                products = products.filter(p => {
-                    const nameLower = p.name.toLowerCase();
-                    return !coffeeProductsToRemove.some(coffee => nameLower.includes(coffee.toLowerCase()));
-                });
-                
+                // Yeni varsayılan ürünleri kontrol et ve ekle
                 defaultProducts.forEach(defaultProd => {
                     const exists = products.find(p => p.name.toLowerCase() === defaultProd.name.toLowerCase());
                     if (!exists) {
                         const maxId = Math.max(...products.map(p => p.id), 0);
                         products.push({ ...defaultProd, id: maxId + 1 });
                     } else {
+                        // Fiyat güncellemesi varsa uygula
                         exists.price = defaultProd.price;
                     }
                 });
@@ -1343,6 +1193,7 @@
             saveData();
         }
 
+        // Haftalık ciro hesaplama
         function calculateWeeklyRevenue() {
             const oneWeekAgo = new Date();
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -1352,11 +1203,13 @@
                 .reduce((sum, order) => sum + order.total, 0);
         }
 
+        // Gelir göstergelerini güncelle
         function updateRevenueDisplays() {
             document.getElementById('dailyRevenue').textContent = dailyRevenue.toFixed(2) + ' ₺';
             document.getElementById('weeklyRevenue').textContent = calculateWeeklyRevenue().toFixed(2) + ' ₺';
         }
 
+        // Table Functions
         function renderTables() {
             const container = document.getElementById('tablesList');
             container.innerHTML = '';
@@ -1379,10 +1232,6 @@
             document.getElementById('selectedTableDisplay').textContent = table.name;
             renderTables();
             renderOrder();
-            
-            if (isPhoneMode) {
-                document.getElementById('orderSection').classList.add('open');
-            }
         }
 
         function addNewTable() {
@@ -1397,6 +1246,7 @@
             }
         }
 
+        // Touch-Optimized Drag & Drop
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
@@ -1411,6 +1261,7 @@
                     <button class="add-btn" onclick="addToOrder(${product.id})">Ekle</button>
                 `;
                 
+                // Touch events for tablet
                 let touchStartTime;
                 let isDragging = false;
                 let longPressTimer;
@@ -1418,6 +1269,8 @@
                 card.addEventListener('touchstart', (e) => {
                     touchStartTime = new Date().getTime();
                     const touch = e.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
                     
                     longPressTimer = setTimeout(() => {
                         isDragging = true;
@@ -1462,10 +1315,12 @@
                         hideDragHint();
                         isDragging = false;
                     } else if (touchDuration < 500) {
+                        // Normal click
                         addToOrder(product.id);
                     }
                 });
                 
+                // Mouse events for desktop
                 card.draggable = true;
                 card.addEventListener('dragstart', (e) => {
                     draggedProduct = index;
@@ -1520,6 +1375,7 @@
             renderProducts();
         }
 
+        // Order Functions
         function addToOrder(productId) {
             if (!currentTable) {
                 alert('Lütfen önce bir masa seçin!');
@@ -1618,6 +1474,7 @@
             const orderItems = [...orders[currentTable]];
             const tableName = tables.find(t => t.id === currentTable).name;
             
+            // Sipariş geçmişine ekle
             const orderRecord = {
                 id: Date.now(),
                 date: new Date().toISOString(),
@@ -1636,6 +1493,7 @@
             orderHistory.unshift(orderRecord);
             dailyRevenue += total;
             
+            // Masayı temizle
             orders[currentTable] = [];
             saveData();
             
@@ -1644,12 +1502,9 @@
             renderTables();
             
             alert(`✅ Hesap kapatıldı!\n\nMasa: ${tableName}\nToplam: ${total.toFixed(2)} ₺\n\nTarih: ${orderRecord.formattedDate}`);
-            
-            if (isPhoneMode) {
-                document.getElementById('orderSection').classList.remove('open');
-            }
         }
 
+        // Reports Modal
         function openReportsModal() {
             document.getElementById('reportsModal').classList.add('active');
             updateReports();
@@ -1674,6 +1529,7 @@
             const oneWeekAgo = new Date();
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
             
+            // Günlük rapor
             const dailyOrders = orderHistory.filter(order => 
                 new Date(order.date).toDateString() === today
             );
@@ -1683,6 +1539,7 @@
             document.getElementById('reportDailyCount').textContent = dailyOrders.length;
             renderOrdersList(dailyOrders, 'dailyOrdersList');
             
+            // Haftalık rapor
             const weeklyOrders = orderHistory.filter(order => 
                 new Date(order.date) >= oneWeekAgo
             );
@@ -1692,6 +1549,7 @@
             document.getElementById('reportWeeklyCount').textContent = weeklyOrders.length;
             renderOrdersList(weeklyOrders, 'weeklyOrdersList');
             
+            // Tüm rapor
             const allTotal = orderHistory.reduce((sum, order) => sum + order.total, 0);
             document.getElementById('reportAllTotal').textContent = allTotal.toFixed(2) + ' ₺';
             document.getElementById('reportAllCount').textContent = orderHistory.length;
@@ -1708,7 +1566,7 @@
             
             container.innerHTML = orders.map(order => `
                 <div class="order-record">
-                    <button class="delete-order-btn" onclick="deleteSingleOrder(${order.id})">×</button>
+                    <button class="delete-order-btn" onclick="deleteSingleOrder(${order.id})" title="Siparişi Sil">×</button>
                     <div class="order-record-header">
                         <h4>${order.tableName}</h4>
                         <span class="date">${order.formattedDate}</span>
@@ -1721,39 +1579,69 @@
             `).join('');
         }
 
+        // TEKİL SİPARİŞ SİLME
         function deleteSingleOrder(orderId) {
-            if (confirm('Bu siparişi silmek istediğinize emin misiniz?')) {
-                orderHistory = orderHistory.filter(o => o.id !== orderId);
-                
-                const today = new Date().toDateString();
-                dailyRevenue = orderHistory
-                    .filter(o => new Date(o.date).toDateString() === today)
-                    .reduce((sum, o) => sum + o.total, 0);
-                
-                saveData();
-                updateRevenueDisplays();
-                updateReports();
+            if (confirm('Bu siparişi silmek istediğinize emin misiniz?\nBu işlem geri alınamaz!')) {
+                // Siparişi bul ve sil
+                const orderIndex = orderHistory.findIndex(o => o.id === orderId);
+                if (orderIndex > -1) {
+                    const deletedOrder = orderHistory[orderIndex];
+                    orderHistory.splice(orderIndex, 1);
+                    
+                    // Günlük ciroyu güncelle (eğer bugünün siparişiyse)
+                    const today = new Date().toDateString();
+                    const orderDate = new Date(deletedOrder.date).toDateString();
+                    
+                    if (orderDate === today) {
+                        dailyRevenue = Math.max(0, dailyRevenue - deletedOrder.total);
+                    }
+                    
+                    saveData();
+                    updateRevenueDisplays();
+                    updateReports();
+                    
+                    // Başarı mesajı
+                    showNotification('Sipariş başarıyla silindi!');
+                }
             }
         }
 
+        // TOPLU SİPARİŞ SİLME FONKSİYONLARI
         function clearDailyOrders() {
-            if (confirm('Bugünkü tüm siparişleri silmek istediğinize emin misiniz?')) {
-                const today = new Date().toDateString();
+            const today = new Date().toDateString();
+            const todayOrders = orderHistory.filter(o => new Date(o.date).toDateString() === today);
+            
+            if (todayOrders.length === 0) {
+                alert('Bugün için silinecek sipariş bulunmamaktadır.');
+                return;
+            }
+            
+            if (confirm(`Bugünkü ${todayOrders.length} adet siparişi silmek istediğinize emin misiniz?\n\nToplam tutar: ${todayOrders.reduce((sum, o) => sum + o.total, 0).toFixed(2)} ₺\n\nBu işlem geri alınamaz!`)) {
                 orderHistory = orderHistory.filter(o => new Date(o.date).toDateString() !== today);
                 dailyRevenue = 0;
                 saveData();
                 updateRevenueDisplays();
                 updateReports();
+                showNotification('Bugünkü tüm siparişler silindi!');
             }
         }
 
         function clearWeeklyOrders() {
-            if (confirm('Son 7 günün tüm siparişlerini silmek istediğinize emin misiniz?')) {
-                const oneWeekAgo = new Date();
-                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            
+            const weeklyOrders = orderHistory.filter(o => new Date(o.date) >= oneWeekAgo);
+            
+            if (weeklyOrders.length === 0) {
+                alert('Son 7 gün için silinecek sipariş bulunmamaktadır.');
+                return;
+            }
+            
+            if (confirm(`Son 7 günün ${weeklyOrders.length} adet siparişini silmek istediğinize emin misiniz?\n\nToplam tutar: ${weeklyOrders.reduce((sum, o) => sum + o.total, 0).toFixed(2)} ₺\n\nBu işlem geri alınamaz!`)) {
+                const today = new Date().toDateString();
                 orderHistory = orderHistory.filter(o => new Date(o.date) < oneWeekAgo);
                 
-                const today = new Date().toDateString();
+                // Günlük ciroyu güncelle
                 dailyRevenue = orderHistory
                     .filter(o => new Date(o.date).toDateString() === today)
                     .reduce((sum, o) => sum + o.total, 0);
@@ -1761,19 +1649,56 @@
                 saveData();
                 updateRevenueDisplays();
                 updateReports();
+                showNotification('Haftalık siparişler silindi!');
             }
         }
 
         function clearAllOrders() {
-            if (confirm('TÜM sipariş geçmişini silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
+            if (orderHistory.length === 0) {
+                alert('Silinecek sipariş bulunmamaktadır.');
+                return;
+            }
+            
+            const totalAmount = orderHistory.reduce((sum, o) => sum + o.total, 0);
+            
+            if (confirm(`TÜM sipariş geçmişini silmek istediğinize emin misiniz?\n\nToplam ${orderHistory.length} adet sipariş\nToplam tutar: ${totalAmount.toFixed(2)} ₺\n\nBU İŞLEM GERİ ALINAMAZ!`)) {
                 orderHistory = [];
                 dailyRevenue = 0;
                 saveData();
                 updateRevenueDisplays();
                 updateReports();
+                showNotification('Tüm sipariş geçmişi silindi!');
             }
         }
 
+        // Bildirim göster
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, #4CAF50, #45a049);
+                color: white;
+                padding: 15px 30px;
+                border-radius: 25px;
+                font-size: 16px;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                z-index: 9999;
+                animation: slideDown 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        // Product Management
         function openProductModal() {
             document.getElementById('productModal').classList.add('active');
             renderProductList();
@@ -1810,12 +1735,6 @@
             
             if (!name || isNaN(price) || price < 0) {
                 alert('Lütfen geçerli ürün adı ve fiyat girin!');
-                return;
-            }
-            
-            const nameLower = name.toLowerCase();
-            if (coffeeProductsToRemove.some(coffee => nameLower.includes(coffee.toLowerCase()))) {
-                alert('Bu ürün kahve kategorisinde olduğu için eklenemez!');
                 return;
             }
             
@@ -1878,11 +1797,26 @@
             }
         }
 
+        // Close modals on outside click
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('active');
             }
         }
+
+        // CSS Animations ekle
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { transform: translateX(-50%) translateY(0); opacity: 1; }
+                to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
