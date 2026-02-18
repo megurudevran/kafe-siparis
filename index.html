@@ -27,11 +27,11 @@
             height: 100vh;
         }
 
-        /* Sidebar - Masalar */
+        /* Sidebar - Masalar (Tablet için optimize) */
         .sidebar {
-            width: 220px;
+            width: 140px;
             background: rgba(0,0,0,0.4);
-            padding: 15px;
+            padding: 10px;
             overflow-y: auto;
             border-right: 1px solid rgba(255,255,255,0.1);
             display: flex;
@@ -39,77 +39,62 @@
         }
 
         .sidebar h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
+            font-size: 14px;
+            margin-bottom: 10px;
             color: #e94560;
             text-align: center;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 2px solid rgba(233, 69, 96, 0.3);
         }
 
         .table-btn {
             width: 100%;
-            padding: 18px;
-            margin-bottom: 12px;
+            padding: 10px 8px;
+            margin-bottom: 6px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             background: rgba(255,255,255,0.1);
             color: #fff;
-            font-size: 16px;
+            font-size: 13px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             position: relative;
             overflow: hidden;
             font-weight: 500;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
         .table-btn:active {
             transform: scale(0.95);
         }
 
-        .table-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateX(5px);
-        }
-
         .table-btn.active {
             background: linear-gradient(135deg, #e94560, #ff6b6b);
-            box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.4);
         }
 
         .table-btn.has-order::after {
             content: '●';
             position: absolute;
-            right: 15px;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
             color: #ffd700;
-            font-size: 14px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            font-size: 10px;
         }
 
         .add-table-btn {
             width: 100%;
-            padding: 15px;
+            padding: 10px;
             margin-top: auto;
-            border: 2px dashed rgba(255,255,255,0.3);
-            border-radius: 12px;
+            border: 1px dashed rgba(255,255,255,0.3);
+            border-radius: 8px;
             background: transparent;
             color: #fff;
-            font-size: 15px;
+            font-size: 12px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .add-table-btn:active {
-            transform: scale(0.95);
-            border-color: #e94560;
-            color: #e94560;
+            transition: all 0.2s;
         }
 
         /* Main Content */
@@ -118,53 +103,52 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            min-width: 0;
         }
 
         .header {
             background: rgba(0,0,0,0.3);
-            padding: 20px;
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
         }
 
         .header h1 {
-            font-size: 26px;
+            font-size: 18px;
             color: #fff;
             margin: 0;
+            white-space: nowrap;
         }
 
         .stats-container {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .stat-box {
-            background: rgba(233, 69, 96, 0.2);
-            padding: 12px 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(233, 69, 96, 0.5);
+            background: rgba(233, 69, 96, 0.15);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(233, 69, 96, 0.3);
             text-align: center;
-            min-width: 140px;
+            min-width: 100px;
         }
 
         .stat-box label {
             display: block;
-            font-size: 12px;
+            font-size: 10px;
             color: #aaa;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .stat-box span {
             color: #e94560;
             font-weight: bold;
-            font-size: 22px;
+            font-size: 16px;
         }
 
         /* Content Area */
@@ -177,14 +161,14 @@
         /* Products Section */
         .products-section {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
-            position: relative;
+            min-width: 0;
         }
 
         .section-title {
-            font-size: 22px;
-            margin-bottom: 20px;
+            font-size: 16px;
+            margin-bottom: 12px;
             color: #e94560;
             display: flex;
             justify-content: space-between;
@@ -193,26 +177,23 @@
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 18px;
-            margin-bottom: 20px;
-            padding-bottom: 80px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            padding-bottom: 60px;
         }
 
         .product-card {
             background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-            border-radius: 16px;
-            padding: 18px;
+            border-radius: 10px;
+            padding: 10px;
             text-align: center;
-            transition: all 0.3s;
+            transition: all 0.2s;
             position: relative;
-            border: 2px solid transparent;
-            min-height: 130px;
+            border: 1px solid transparent;
+            min-height: 90px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            touch-action: none;
         }
 
         .product-card:active {
@@ -221,161 +202,141 @@
 
         .product-card.dragging {
             opacity: 0.6;
-            border: 2px dashed #e94560;
-            transform: scale(1.05);
+            border: 1px dashed #e94560;
             z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
         .product-card.drag-over {
-            border: 2px solid #e94560;
-            transform: scale(1.02);
+            border: 1px solid #e94560;
             background: rgba(233, 69, 96, 0.1);
         }
 
         .product-card h3 {
-            font-size: 15px;
-            margin-bottom: 10px;
+            font-size: 12px;
+            margin-bottom: 5px;
             color: #fff;
-            line-height: 1.3;
+            line-height: 1.2;
             font-weight: 500;
         }
 
         .product-card .price {
             color: #e94560;
-            font-size: 20px;
+            font-size: 14px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .product-card .add-btn {
             width: 100%;
-            padding: 10px;
+            padding: 6px;
             border: none;
-            border-radius: 10px;
+            border-radius: 6px;
             background: linear-gradient(135deg, #e94560, #ff6b6b);
             color: #fff;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 12px;
             font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(233, 69, 96, 0.3);
         }
 
-        .product-card .add-btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 5px rgba(233, 69, 96, 0.3);
-        }
-
-        /* Order Section */
+        /* Order Section - HER ZAMAN AÇIK */
         .order-section {
-            width: 380px;
+            width: 280px;
             background: rgba(0,0,0,0.3);
             border-left: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
         }
 
         .order-header {
-            padding: 25px;
+            padding: 12px;
             background: linear-gradient(135deg, rgba(233, 69, 96, 0.3), rgba(233, 69, 96, 0.1));
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .order-header h2 {
-            font-size: 22px;
-            margin-bottom: 8px;
+            font-size: 16px;
+            margin-bottom: 4px;
         }
 
         .order-header p {
             color: #aaa;
-            font-size: 15px;
+            font-size: 12px;
         }
 
         .order-items {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 10px;
         }
 
         .order-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
+            padding: 8px;
             background: rgba(255,255,255,0.05);
-            margin-bottom: 12px;
-            border-radius: 12px;
-            animation: slideIn 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 6px;
+            border-radius: 8px;
+            animation: slideIn 0.2s ease;
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
+            from { opacity: 0; transform: translateX(10px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
         .order-item-info h4 {
-            font-size: 17px;
-            margin-bottom: 6px;
+            font-size: 13px;
+            margin-bottom: 2px;
             font-weight: 500;
         }
 
         .order-item-info span {
             color: #e94560;
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 12px;
         }
 
         .order-item-actions {
             display: flex;
-            gap: 12px;
+            gap: 6px;
             align-items: center;
         }
 
         .quantity-btn {
-            width: 36px;
-            height: 36px;
+            width: 26px;
+            height: 26px;
             border: none;
             border-radius: 50%;
             background: rgba(255,255,255,0.2);
             color: #fff;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-            font-weight: bold;
         }
 
         .quantity-btn:active {
             background: #e94560;
-            transform: scale(0.9);
         }
 
         .remove-item {
             background: #ff4444;
             border: none;
             color: #fff;
-            width: 36px;
-            height: 36px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .remove-item:active {
-            transform: scale(0.9);
-            background: #ff6666;
         }
 
         .order-footer {
-            padding: 25px;
+            padding: 12px;
             background: rgba(0,0,0,0.4);
             border-top: 2px solid rgba(233, 69, 96, 0.3);
         }
@@ -383,8 +344,8 @@
         .total-amount {
             display: flex;
             justify-content: space-between;
-            font-size: 26px;
-            margin-bottom: 20px;
+            font-size: 18px;
+            margin-bottom: 10px;
             font-weight: bold;
         }
 
@@ -394,50 +355,46 @@
 
         .checkout-btn {
             width: 100%;
-            padding: 18px;
+            padding: 12px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             background: linear-gradient(135deg, #e94560, #ff6b6b);
             color: #fff;
-            font-size: 20px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
         }
 
         .checkout-btn:active {
-            transform: translateY(-2px) scale(0.98);
-            box-shadow: 0 3px 10px rgba(233, 69, 96, 0.3);
+            transform: scale(0.98);
         }
 
-        /* Management Buttons */
+        /* Management Buttons - KÜÇÜLTÜLMÜŞ */
         .management-btns {
             position: fixed;
-            bottom: 25px;
-            left: 240px;
+            bottom: 10px;
+            left: 150px;
             display: flex;
-            gap: 12px;
+            gap: 8px;
             z-index: 100;
         }
 
         .mgmt-btn {
-            padding: 14px 28px;
+            padding: 10px 16px;
             border: none;
-            border-radius: 30px;
+            border-radius: 20px;
             background: linear-gradient(135deg, #e94560, #ff6b6b);
             color: #fff;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 12px;
             font-weight: 600;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            white-space: nowrap;
         }
 
         .mgmt-btn:active {
-            transform: translateY(-2px) scale(0.95);
+            transform: scale(0.95);
         }
 
         .reports-btn {
@@ -457,11 +414,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.9);
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(5px);
         }
 
         .modal.active {
@@ -470,71 +426,63 @@
 
         .modal-content {
             background: linear-gradient(145deg, #1a1a2e, #16213e);
-            border-radius: 24px;
-            padding: 35px;
-            width: 90%;
-            max-width: 700px;
-            max-height: 85vh;
+            border-radius: 16px;
+            padding: 20px;
+            width: 95%;
+            max-width: 600px;
+            max-height: 90vh;
             overflow-y: auto;
             border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 2px solid rgba(233, 69, 96, 0.3);
         }
 
         .modal-header h2 {
             color: #e94560;
-            font-size: 26px;
+            font-size: 20px;
         }
 
         .close-btn {
             background: none;
             border: none;
             color: #fff;
-            font-size: 36px;
+            font-size: 28px;
             cursor: pointer;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            transition: all 0.3s;
-        }
-
-        .close-btn:active {
-            background: rgba(255,255,255,0.1);
-            transform: rotate(90deg);
         }
 
         /* Reports Styles */
         .reports-tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
+            gap: 8px;
+            margin-bottom: 15px;
             background: rgba(255,255,255,0.05);
-            padding: 8px;
-            border-radius: 12px;
+            padding: 6px;
+            border-radius: 8px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             background: transparent;
             color: #aaa;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 500;
-            transition: all 0.3s;
         }
 
         .tab-btn.active {
@@ -553,247 +501,195 @@
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .summary-card {
             background: rgba(255,255,255,0.05);
-            padding: 20px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 8px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .summary-card h3 {
-            font-size: 14px;
+            font-size: 11px;
             color: #aaa;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             text-transform: uppercase;
         }
 
         .summary-card .amount {
-            font-size: 28px;
+            font-size: 20px;
             color: #e94560;
             font-weight: bold;
         }
 
         .orders-list {
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
         }
 
         .order-record {
             background: rgba(255,255,255,0.05);
-            padding: 18px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            border-left: 4px solid #e94560;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 3px solid #e94560;
             position: relative;
-            padding-right: 50px;
+            padding-right: 40px;
         }
 
         .order-record-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             align-items: center;
         }
 
         .order-record h4 {
             color: #fff;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .order-record .date {
             color: #aaa;
-            font-size: 13px;
+            font-size: 11px;
         }
 
         .order-record-items {
-            font-size: 14px;
+            font-size: 12px;
             color: #ccc;
-            margin-bottom: 8px;
-            line-height: 1.5;
+            margin-bottom: 4px;
+            line-height: 1.4;
         }
 
         .order-record-total {
             text-align: right;
             color: #e94560;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
         }
 
         .delete-order-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             background: #ff4444;
             border: none;
             color: #fff;
-            width: 35px;
-            height: 35px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .delete-order-btn:hover {
-            background: #ff6666;
-            transform: scale(1.1);
-        }
-
-        .delete-order-btn:active {
-            transform: scale(0.95);
         }
 
         .clear-all-btn {
             width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 2px solid #ff4444;
-            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ff4444;
+            border-radius: 6px;
             background: rgba(255, 68, 68, 0.1);
             color: #ff4444;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 600;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-        }
-
-        .clear-all-btn:hover {
-            background: rgba(255, 68, 68, 0.2);
-        }
-
-        .clear-all-btn:active {
-            background: #ff4444;
-            color: #fff;
-            transform: scale(0.98);
+            gap: 8px;
         }
 
         .no-data {
             text-align: center;
-            padding: 40px;
+            padding: 20px;
             color: #666;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         /* Form Elements */
         .form-group {
-            margin-bottom: 22px;
+            margin-bottom: 12px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             color: #aaa;
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 13px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 14px;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
             background: rgba(255,255,255,0.1);
             color: #fff;
-            font-size: 17px;
-            transition: all 0.3s;
+            font-size: 14px;
         }
 
-        .form-group input:focus {
-            outline: none;
-            border-color: #e94560;
-            background: rgba(255,255,255,0.15);
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 8px;
         }
 
         .btn-primary {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
             background: linear-gradient(135deg, #e94560, #ff6b6b);
             color: #fff;
-            font-size: 17px;
-            cursor: pointer;
-            margin-bottom: 12px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
         }
 
         .btn-secondary {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 10px;
             background: transparent;
             color: #fff;
-            font-size: 17px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .btn-secondary:active {
-            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .product-list-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px;
+            padding: 10px;
             background: rgba(255,255,255,0.05);
-            margin-bottom: 12px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 8px;
+            border-radius: 6px;
         }
 
         .product-list-item h4 {
-            margin-bottom: 6px;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .product-list-item span {
             color: #e94560;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
         }
 
         .product-actions {
             display: flex;
-            gap: 12px;
+            gap: 8px;
         }
 
         .icon-btn {
-            width: 42px;
-            height: 42px;
+            width: 32px;
+            height: 32px;
             border: none;
-            border-radius: 10px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .icon-btn:active {
-            transform: scale(0.9);
         }
 
         .edit-btn {
@@ -806,71 +702,30 @@
             color: #fff;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #e94560;
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff6b6b;
-        }
-
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 50px;
+            padding: 30px;
             color: rgba(255,255,255,0.4);
         }
 
         .empty-state h3 {
-            font-size: 20px;
-            margin-bottom: 15px;
+            font-size: 16px;
+            margin-bottom: 8px;
         }
 
-        /* Drag hint */
-        .drag-hint {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #aaa;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .drag-hint.show {
-            opacity: 1;
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
         }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
-            }
-            .order-section {
-                width: 320px;
-            }
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-            .management-btns {
-                left: 220px;
-            }
+        ::-webkit-scrollbar-thumb {
+            background: #e94560;
+            border-radius: 3px;
         }
     </style>
 </head>
@@ -880,7 +735,7 @@
         <div class="sidebar">
             <h2>🪑 Masalar</h2>
             <div id="tablesList" style="flex: 1; overflow-y: auto;"></div>
-            <button class="add-table-btn" onclick="addNewTable()">+ Yeni Masa Ekle</button>
+            <button class="add-table-btn" onclick="addNewTable()">+ Masa Ekle</button>
         </div>
 
         <!-- Main Content -->
@@ -889,11 +744,11 @@
                 <h1 id="currentTableName">Masa Seçin</h1>
                 <div class="stats-container">
                     <div class="stat-box">
-                        <label>Bugünkü Ciro</label>
+                        <label>Bugün</label>
                         <span id="dailyRevenue">0 ₺</span>
                     </div>
                     <div class="stat-box">
-                        <label>Haftalık Ciro</label>
+                        <label>Hafta</label>
                         <span id="weeklyRevenue">0 ₺</span>
                     </div>
                 </div>
@@ -904,21 +759,21 @@
                 <div class="products-section">
                     <div class="section-title">
                         <span>Ürünler</span>
-                        <small style="font-size: 13px; color: #aaa;">(Basılı tutup sürükleyin)</small>
+                        <small style="font-size: 11px; color: #aaa;">(Sürükle)</small>
                     </div>
                     <div class="products-grid" id="productsGrid"></div>
                 </div>
 
-                <!-- Order Section -->
+                <!-- Order Section - HER ZAMAN GÖRÜNÜR -->
                 <div class="order-section">
                     <div class="order-header">
-                        <h2>Sipariş Detayı</h2>
+                        <h2>Sipariş</h2>
                         <p>Masa: <span id="selectedTableDisplay">-</span></p>
                     </div>
                     <div class="order-items" id="orderItems">
                         <div class="empty-state">
                             <h3>Sipariş Yok</h3>
-                            <p>Ürün eklemek için sol taraftan seçin</p>
+                            <p style="font-size: 12px;">Ürün seçin</p>
                         </div>
                     </div>
                     <div class="order-footer">
@@ -935,12 +790,10 @@
 
     <!-- Management Buttons -->
     <div class="management-btns">
-        <button class="mgmt-btn" onclick="openProductModal()">Ürün Yönetimi</button>
-        <button class="mgmt-btn reports-btn" onclick="openReportsModal()">📊 Raporlar</button>
-        <button class="mgmt-btn reset-day-btn" onclick="resetDailyRevenue()">Günü Sıfırla</button>
+        <button class="mgmt-btn" onclick="openProductModal()">Ürünler</button>
+        <button class="mgmt-btn reports-btn" onclick="openReportsModal()">Raporlar</button>
+        <button class="mgmt-btn reset-day-btn" onclick="resetDailyRevenue()">Sıfırla</button>
     </div>
-
-    <div class="drag-hint" id="dragHint">Sürüklemek için basılı tutun</div>
 
     <!-- Product Management Modal -->
     <div class="modal" id="productModal">
@@ -952,26 +805,26 @@
             
             <div class="form-group">
                 <label>Ürün Adı</label>
-                <input type="text" id="newProductName" placeholder="Ürün adı girin">
+                <input type="text" id="newProductName" placeholder="Ürün adı">
             </div>
             <div class="form-group">
                 <label>Fiyat (₺)</label>
                 <input type="number" id="newProductPrice" placeholder="0.00" step="0.01">
             </div>
-            <button class="btn-primary" onclick="addProduct()">Ürün Ekle</button>
+            <button class="btn-primary" onclick="addProduct()">Ekle</button>
             
-            <hr style="margin: 25px 0; border-color: rgba(255,255,255,0.1);">
+            <hr style="margin: 15px 0; border-color: rgba(255,255,255,0.1);">
             
-            <h3 style="margin-bottom: 20px; color: #e94560;">Mevcut Ürünler</h3>
+            <h3 style="margin-bottom: 10px; color: #e94560; font-size: 14px;">Mevcut Ürünler</h3>
             <div id="productList"></div>
         </div>
     </div>
 
     <!-- Reports Modal -->
     <div class="modal" id="reportsModal">
-        <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2>📊 Satış Raporları</h2>
+                <h2>Raporlar</h2>
                 <button class="close-btn" onclick="closeReportsModal()">&times;</button>
             </div>
             
@@ -982,59 +835,47 @@
             </div>
 
             <div id="dailyReport" class="report-content active">
-                <button class="clear-all-btn" onclick="clearDailyOrders()">
-                    <span>🗑️</span>
-                    <span>Bugünkü Tüm Siparişleri Sil</span>
-                </button>
+                <button class="clear-all-btn" onclick="clearDailyOrders()">🗑️ Bugünü Temizle</button>
                 <div class="summary-cards">
                     <div class="summary-card">
-                        <h3>Bugün Toplam</h3>
+                        <h3>Toplam</h3>
                         <div class="amount" id="reportDailyTotal">0 ₺</div>
                     </div>
                     <div class="summary-card">
-                        <h3>Sipariş Sayısı</h3>
+                        <h3>Adet</h3>
                         <div class="amount" id="reportDailyCount">0</div>
                     </div>
                 </div>
-                <h3 style="margin-bottom: 15px; color: #e94560;">Bugünkü Siparişler</h3>
                 <div class="orders-list" id="dailyOrdersList"></div>
             </div>
 
             <div id="weeklyReport" class="report-content">
-                <button class="clear-all-btn" onclick="clearWeeklyOrders()">
-                    <span>🗑️</span>
-                    <span>Haftalık Tüm Siparişleri Sil</span>
-                </button>
+                <button class="clear-all-btn" onclick="clearWeeklyOrders()">🗑️ Haftayı Temizle</button>
                 <div class="summary-cards">
                     <div class="summary-card">
-                        <h3>Haftalık Toplam</h3>
+                        <h3>Toplam</h3>
                         <div class="amount" id="reportWeeklyTotal">0 ₺</div>
                     </div>
                     <div class="summary-card">
-                        <h3>Haftalık Sipariş</h3>
+                        <h3>Adet</h3>
                         <div class="amount" id="reportWeeklyCount">0</div>
                     </div>
                 </div>
-                <h3 style="margin-bottom: 15px; color: #e94560;">Haftalık Özet</h3>
                 <div class="orders-list" id="weeklyOrdersList"></div>
             </div>
 
             <div id="allReport" class="report-content">
-                <button class="clear-all-btn" onclick="clearAllOrders()">
-                    <span>🗑️</span>
-                    <span>Tüm Sipariş Geçmişini Sil</span>
-                </button>
+                <button class="clear-all-btn" onclick="clearAllOrders()">🗑️ Tümünü Temizle</button>
                 <div class="summary-cards">
                     <div class="summary-card">
-                        <h3>Genel Toplam</h3>
+                        <h3>Toplam</h3>
                         <div class="amount" id="reportAllTotal">0 ₺</div>
                     </div>
                     <div class="summary-card">
-                        <h3>Toplam Sipariş</h3>
+                        <h3>Adet</h3>
                         <div class="amount" id="reportAllCount">0</div>
                     </div>
                 </div>
-                <h3 style="margin-bottom: 15px; color: #e94560;">Tüm Sipariş Geçmişi</h3>
                 <div class="orders-list" id="allOrdersList"></div>
             </div>
         </div>
@@ -1044,7 +885,7 @@
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Ürün Düzenle</h2>
+                <h2>Düzenle</h2>
                 <button class="close-btn" onclick="closeEditModal()">&times;</button>
             </div>
             <input type="hidden" id="editProductId">
@@ -1069,36 +910,32 @@
         let dailyRevenue = 0;
         let currentTable = null;
         let draggedProduct = null;
-        let touchStartY = 0;
-        let touchStartX = 0;
         let orderHistory = [];
 
-        // Yeni ürün listesi
         const defaultProducts = [
             { id: 1, name: 'Çay', price: 20 },
             { id: 2, name: 'Oralet', price: 20 },
-            { id: 3, name: 'Soğuk İçecekler', price: 70 },
+            { id: 3, name: 'Soğuk İç.', price: 70 },
             { id: 4, name: 'Sade Soda', price: 25 },
-            { id: 5, name: 'Meyveli Soda', price: 30 },
+            { id: 5, name: 'Meyv. Soda', price: 30 },
             { id: 6, name: 'Tost', price: 170 },
-            { id: 7, name: 'Yarım Tost', price: 85 },
-            { id: 8, name: 'Fındıklı İçecekler', price: 110 },
+            { id: 7, name: 'Yar. Tost', price: 85 },
+            { id: 8, name: 'Fınd. İç.', price: 110 },
             { id: 9, name: 'Ayran', price: 30 },
             { id: 10, name: 'Kuşburnu', price: 80 },
             { id: 11, name: 'Nescafe', price: 60 },
             { id: 12, name: 'Sütlü', price: 80 },
             { id: 13, name: 'Sütlaç', price: 110 },
-            { id: 14, name: 'Fındık Tabağı', price: 70 },
+            { id: 14, name: 'Fındık Tab.', price: 70 },
             { id: 15, name: 'Churchill', price: 60 },
             { id: 16, name: 'Kek', price: 20 },
             { id: 17, name: 'Çikolata', price: 30 },
             { id: 18, name: 'Cips', price: 35 },
-            { id: 19, name: 'Sahlep - Sıcak Çikolata', price: 90 },
+            { id: 19, name: 'Sahlep', price: 90 },
             { id: 20, name: 'Redbull', price: 90 },
             { id: 21, name: 'Bisküvi', price: 35 }
         ];
 
-        // Initialize
         window.onload = function() {
             loadData();
             renderTables();
@@ -1110,7 +947,6 @@
             }
         };
 
-        // Local Storage Functions
         function saveData() {
             localStorage.setItem('cafe_tables', JSON.stringify(tables));
             localStorage.setItem('cafe_products', JSON.stringify(products));
@@ -1118,7 +954,6 @@
             localStorage.setItem('cafe_dailyRevenue', dailyRevenue);
             localStorage.setItem('cafe_lastResetDate', new Date().toDateString());
             localStorage.setItem('cafe_orderHistory', JSON.stringify(orderHistory));
-            localStorage.setItem('cafe_weeklyRevenue', calculateWeeklyRevenue());
         }
 
         function loadData() {
@@ -1131,23 +966,9 @@
             
             const today = new Date().toDateString();
             
-            // Sipariş geçmişini yükle
-            if (savedHistory) {
-                orderHistory = JSON.parse(savedHistory);
-            }
+            if (savedHistory) orderHistory = JSON.parse(savedHistory);
             
-            // Yeni gün kontrolü
             if (lastResetDate !== today) {
-                if (lastResetDate) {
-                    const yesterday = new Date(lastResetDate);
-                    const todayDate = new Date();
-                    const diffTime = Math.abs(todayDate - yesterday);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (diffDays > 1) {
-                        dailyRevenue = 0;
-                    }
-                }
                 dailyRevenue = 0;
                 orders = {};
             } else {
@@ -1155,7 +976,6 @@
                 orders = savedOrders ? JSON.parse(savedOrders) : {};
             }
             
-            // Masaları yükle
             if (savedTables) {
                 tables = JSON.parse(savedTables);
             } else {
@@ -1172,17 +992,14 @@
                 }
             }
             
-            // Ürünleri yükle
             if (savedProducts) {
                 products = JSON.parse(savedProducts);
-                // Yeni varsayılan ürünleri kontrol et ve ekle
                 defaultProducts.forEach(defaultProd => {
                     const exists = products.find(p => p.name.toLowerCase() === defaultProd.name.toLowerCase());
                     if (!exists) {
                         const maxId = Math.max(...products.map(p => p.id), 0);
                         products.push({ ...defaultProd, id: maxId + 1 });
                     } else {
-                        // Fiyat güncellemesi varsa uygula
                         exists.price = defaultProd.price;
                     }
                 });
@@ -1193,7 +1010,6 @@
             saveData();
         }
 
-        // Haftalık ciro hesaplama
         function calculateWeeklyRevenue() {
             const oneWeekAgo = new Date();
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -1203,13 +1019,11 @@
                 .reduce((sum, order) => sum + order.total, 0);
         }
 
-        // Gelir göstergelerini güncelle
         function updateRevenueDisplays() {
-            document.getElementById('dailyRevenue').textContent = dailyRevenue.toFixed(2) + ' ₺';
-            document.getElementById('weeklyRevenue').textContent = calculateWeeklyRevenue().toFixed(2) + ' ₺';
+            document.getElementById('dailyRevenue').textContent = dailyRevenue.toFixed(0) + ' ₺';
+            document.getElementById('weeklyRevenue').textContent = calculateWeeklyRevenue().toFixed(0) + ' ₺';
         }
 
-        // Table Functions
         function renderTables() {
             const container = document.getElementById('tablesList');
             container.innerHTML = '';
@@ -1237,7 +1051,7 @@
         function addNewTable() {
             const maxId = Math.max(...tables.map(t => t.id), 0);
             const newId = maxId + 1;
-            const name = prompt('Masa adı girin:', `Masa ${newId}`);
+            const name = prompt('Masa adı:', `Masa ${newId}`);
             if (name) {
                 tables.push({ id: newId, name: name });
                 saveData();
@@ -1246,7 +1060,6 @@
             }
         }
 
-        // Touch-Optimized Drag & Drop
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
@@ -1257,26 +1070,21 @@
                 card.dataset.index = index;
                 card.innerHTML = `
                     <h3>${product.name}</h3>
-                    <div class="price">${product.price.toFixed(2)} ₺</div>
-                    <button class="add-btn" onclick="addToOrder(${product.id})">Ekle</button>
+                    <div class="price">${product.price.toFixed(0)} ₺</div>
+                    <button class="add-btn" onclick="addToOrder(${product.id})">+</button>
                 `;
                 
-                // Touch events for tablet
+                // Touch events
                 let touchStartTime;
                 let isDragging = false;
                 let longPressTimer;
                 
                 card.addEventListener('touchstart', (e) => {
                     touchStartTime = new Date().getTime();
-                    const touch = e.touches[0];
-                    touchStartX = touch.clientX;
-                    touchStartY = touch.clientY;
-                    
                     longPressTimer = setTimeout(() => {
                         isDragging = true;
                         card.classList.add('dragging');
-                        showDragHint();
-                    }, 500);
+                    }, 400);
                 }, {passive: false});
                 
                 card.addEventListener('touchmove', (e) => {
@@ -1312,15 +1120,13 @@
                         
                         card.classList.remove('dragging');
                         document.querySelectorAll('.product-card').forEach(c => c.classList.remove('drag-over'));
-                        hideDragHint();
                         isDragging = false;
-                    } else if (touchDuration < 500) {
-                        // Normal click
+                    } else if (touchDuration < 400) {
                         addToOrder(product.id);
                     }
                 });
                 
-                // Mouse events for desktop
+                // Mouse events
                 card.draggable = true;
                 card.addEventListener('dragstart', (e) => {
                     draggedProduct = index;
@@ -1335,7 +1141,6 @@
                 
                 card.addEventListener('dragover', (e) => {
                     e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
                 });
                 
                 card.addEventListener('dragenter', (e) => {
@@ -1359,14 +1164,6 @@
             });
         }
 
-        function showDragHint() {
-            document.getElementById('dragHint').classList.add('show');
-        }
-
-        function hideDragHint() {
-            document.getElementById('dragHint').classList.remove('show');
-        }
-
         function swapProducts(fromIndex, toIndex) {
             const temp = products[fromIndex];
             products[fromIndex] = products[toIndex];
@@ -1375,10 +1172,9 @@
             renderProducts();
         }
 
-        // Order Functions
         function addToOrder(productId) {
             if (!currentTable) {
-                alert('Lütfen önce bir masa seçin!');
+                alert('Masa seçin!');
                 return;
             }
             
@@ -1410,7 +1206,7 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <h3>Sipariş Yok</h3>
-                        <p>Ürün eklemek için sol taraftan seçin</p>
+                        <p style="font-size: 12px;">Ürün seçin</p>
                     </div>
                 `;
                 document.getElementById('totalAmount').textContent = '0 ₺';
@@ -1429,11 +1225,11 @@
                 div.innerHTML = `
                     <div class="order-item-info">
                         <h4>${item.name}</h4>
-                        <span>${item.price.toFixed(2)} ₺ x ${item.quantity} = ${itemTotal.toFixed(2)} ₺</span>
+                        <span>${item.price.toFixed(0)}₺ x ${item.quantity}</span>
                     </div>
                     <div class="order-item-actions">
                         <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">−</button>
-                        <span style="font-size: 18px; font-weight: bold;">${item.quantity}</span>
+                        <span style="font-size: 13px;">${item.quantity}</span>
                         <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
                         <button class="remove-item" onclick="removeItem(${index})">×</button>
                     </div>
@@ -1441,7 +1237,7 @@
                 container.appendChild(div);
             });
             
-            document.getElementById('totalAmount').textContent = total.toFixed(2) + ' ₺';
+            document.getElementById('totalAmount').textContent = total.toFixed(0) + ' ₺';
         }
 
         function updateQuantity(index, change) {
@@ -1466,7 +1262,7 @@
 
         function checkout() {
             if (!orders[currentTable] || orders[currentTable].length === 0) {
-                alert('Sipariş bulunmamaktadır!');
+                alert('Sipariş yok!');
                 return;
             }
             
@@ -1474,7 +1270,6 @@
             const orderItems = [...orders[currentTable]];
             const tableName = tables.find(t => t.id === currentTable).name;
             
-            // Sipariş geçmişine ekle
             const orderRecord = {
                 id: Date.now(),
                 date: new Date().toISOString(),
@@ -1482,7 +1277,6 @@
                 items: orderItems,
                 total: total,
                 formattedDate: new Date().toLocaleString('tr-TR', {
-                    year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
                     hour: '2-digit',
@@ -1493,7 +1287,6 @@
             orderHistory.unshift(orderRecord);
             dailyRevenue += total;
             
-            // Masayı temizle
             orders[currentTable] = [];
             saveData();
             
@@ -1501,10 +1294,9 @@
             renderOrder();
             renderTables();
             
-            alert(`✅ Hesap kapatıldı!\n\nMasa: ${tableName}\nToplam: ${total.toFixed(2)} ₺\n\nTarih: ${orderRecord.formattedDate}`);
+            alert(`✅ ${tableName}\nToplam: ${total.toFixed(0)} ₺`);
         }
 
-        // Reports Modal
         function openReportsModal() {
             document.getElementById('reportsModal').classList.add('active');
             updateReports();
@@ -1529,29 +1321,26 @@
             const oneWeekAgo = new Date();
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
             
-            // Günlük rapor
             const dailyOrders = orderHistory.filter(order => 
                 new Date(order.date).toDateString() === today
             );
             const dailyTotal = dailyOrders.reduce((sum, order) => sum + order.total, 0);
             
-            document.getElementById('reportDailyTotal').textContent = dailyTotal.toFixed(2) + ' ₺';
+            document.getElementById('reportDailyTotal').textContent = dailyTotal.toFixed(0) + ' ₺';
             document.getElementById('reportDailyCount').textContent = dailyOrders.length;
             renderOrdersList(dailyOrders, 'dailyOrdersList');
             
-            // Haftalık rapor
             const weeklyOrders = orderHistory.filter(order => 
                 new Date(order.date) >= oneWeekAgo
             );
             const weeklyTotal = weeklyOrders.reduce((sum, order) => sum + order.total, 0);
             
-            document.getElementById('reportWeeklyTotal').textContent = weeklyTotal.toFixed(2) + ' ₺';
+            document.getElementById('reportWeeklyTotal').textContent = weeklyTotal.toFixed(0) + ' ₺';
             document.getElementById('reportWeeklyCount').textContent = weeklyOrders.length;
             renderOrdersList(weeklyOrders, 'weeklyOrdersList');
             
-            // Tüm rapor
             const allTotal = orderHistory.reduce((sum, order) => sum + order.total, 0);
-            document.getElementById('reportAllTotal').textContent = allTotal.toFixed(2) + ' ₺';
+            document.getElementById('reportAllTotal').textContent = allTotal.toFixed(0) + ' ₺';
             document.getElementById('reportAllCount').textContent = orderHistory.length;
             renderOrdersList(orderHistory, 'allOrdersList');
         }
@@ -1560,69 +1349,56 @@
             const container = document.getElementById(containerId);
             
             if (orders.length === 0) {
-                container.innerHTML = '<div class="no-data">Kayıt bulunmamaktadır</div>';
+                container.innerHTML = '<div class="no-data">Kayıt yok</div>';
                 return;
             }
             
             container.innerHTML = orders.map(order => `
                 <div class="order-record">
-                    <button class="delete-order-btn" onclick="deleteSingleOrder(${order.id})" title="Siparişi Sil">×</button>
+                    <button class="delete-order-btn" onclick="deleteSingleOrder(${order.id})">×</button>
                     <div class="order-record-header">
                         <h4>${order.tableName}</h4>
                         <span class="date">${order.formattedDate}</span>
                     </div>
                     <div class="order-record-items">
-                        ${order.items.map(item => `${item.name} (${item.quantity}x)`).join(', ')}
+                        ${order.items.map(item => `${item.name}(${item.quantity})`).join(', ')}
                     </div>
-                    <div class="order-record-total">${order.total.toFixed(2)} ₺</div>
+                    <div class="order-record-total">${order.total.toFixed(0)} ₺</div>
                 </div>
             `).join('');
         }
 
-        // TEKİL SİPARİŞ SİLME
         function deleteSingleOrder(orderId) {
-            if (confirm('Bu siparişi silmek istediğinize emin misiniz?\nBu işlem geri alınamaz!')) {
-                // Siparişi bul ve sil
-                const orderIndex = orderHistory.findIndex(o => o.id === orderId);
-                if (orderIndex > -1) {
-                    const deletedOrder = orderHistory[orderIndex];
-                    orderHistory.splice(orderIndex, 1);
-                    
-                    // Günlük ciroyu güncelle (eğer bugünün siparişiyse)
-                    const today = new Date().toDateString();
-                    const orderDate = new Date(deletedOrder.date).toDateString();
-                    
-                    if (orderDate === today) {
-                        dailyRevenue = Math.max(0, dailyRevenue - deletedOrder.total);
-                    }
-                    
-                    saveData();
-                    updateRevenueDisplays();
-                    updateReports();
-                    
-                    // Başarı mesajı
-                    showNotification('Sipariş başarıyla silindi!');
+            if (!confirm('Sipariş silinsin mi?')) return;
+            
+            const orderIndex = orderHistory.findIndex(o => o.id === orderId);
+            if (orderIndex > -1) {
+                const deletedOrder = orderHistory[orderIndex];
+                orderHistory.splice(orderIndex, 1);
+                
+                const today = new Date().toDateString();
+                if (new Date(deletedOrder.date).toDateString() === today) {
+                    dailyRevenue = Math.max(0, dailyRevenue - deletedOrder.total);
                 }
+                
+                saveData();
+                updateRevenueDisplays();
+                updateReports();
             }
         }
 
-        // TOPLU SİPARİŞ SİLME FONKSİYONLARI
         function clearDailyOrders() {
             const today = new Date().toDateString();
             const todayOrders = orderHistory.filter(o => new Date(o.date).toDateString() === today);
             
-            if (todayOrders.length === 0) {
-                alert('Bugün için silinecek sipariş bulunmamaktadır.');
-                return;
-            }
+            if (todayOrders.length === 0) return;
             
-            if (confirm(`Bugünkü ${todayOrders.length} adet siparişi silmek istediğinize emin misiniz?\n\nToplam tutar: ${todayOrders.reduce((sum, o) => sum + o.total, 0).toFixed(2)} ₺\n\nBu işlem geri alınamaz!`)) {
+            if (confirm(`${todayOrders.length} sipariş silinsin mi?`)) {
                 orderHistory = orderHistory.filter(o => new Date(o.date).toDateString() !== today);
                 dailyRevenue = 0;
                 saveData();
                 updateRevenueDisplays();
                 updateReports();
-                showNotification('Bugünkü tüm siparişler silindi!');
             }
         }
 
@@ -1632,73 +1408,29 @@
             
             const weeklyOrders = orderHistory.filter(o => new Date(o.date) >= oneWeekAgo);
             
-            if (weeklyOrders.length === 0) {
-                alert('Son 7 gün için silinecek sipariş bulunmamaktadır.');
-                return;
-            }
+            if (weeklyOrders.length === 0) return;
             
-            if (confirm(`Son 7 günün ${weeklyOrders.length} adet siparişini silmek istediğinize emin misiniz?\n\nToplam tutar: ${weeklyOrders.reduce((sum, o) => sum + o.total, 0).toFixed(2)} ₺\n\nBu işlem geri alınamaz!`)) {
-                const today = new Date().toDateString();
+            if (confirm(`${weeklyOrders.length} sipariş silinsin mi?`)) {
                 orderHistory = orderHistory.filter(o => new Date(o.date) < oneWeekAgo);
-                
-                // Günlük ciroyu güncelle
-                dailyRevenue = orderHistory
-                    .filter(o => new Date(o.date).toDateString() === today)
-                    .reduce((sum, o) => sum + o.total, 0);
-                
+                dailyRevenue = 0;
                 saveData();
                 updateRevenueDisplays();
                 updateReports();
-                showNotification('Haftalık siparişler silindi!');
             }
         }
 
         function clearAllOrders() {
-            if (orderHistory.length === 0) {
-                alert('Silinecek sipariş bulunmamaktadır.');
-                return;
-            }
+            if (orderHistory.length === 0) return;
             
-            const totalAmount = orderHistory.reduce((sum, o) => sum + o.total, 0);
-            
-            if (confirm(`TÜM sipariş geçmişini silmek istediğinize emin misiniz?\n\nToplam ${orderHistory.length} adet sipariş\nToplam tutar: ${totalAmount.toFixed(2)} ₺\n\nBU İŞLEM GERİ ALINAMAZ!`)) {
+            if (confirm(`TÜM ${orderHistory.length} sipariş silinsin mi?`)) {
                 orderHistory = [];
                 dailyRevenue = 0;
                 saveData();
                 updateRevenueDisplays();
                 updateReports();
-                showNotification('Tüm sipariş geçmişi silindi!');
             }
         }
 
-        // Bildirim göster
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: linear-gradient(135deg, #4CAF50, #45a049);
-                color: white;
-                padding: 15px 30px;
-                border-radius: 25px;
-                font-size: 16px;
-                font-weight: 600;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                z-index: 9999;
-                animation: slideDown 0.3s ease;
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideUp 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, 2000);
-        }
-
-        // Product Management
         function openProductModal() {
             document.getElementById('productModal').classList.add('active');
             renderProductList();
@@ -1718,7 +1450,7 @@
                 div.innerHTML = `
                     <div>
                         <h4>${product.name}</h4>
-                        <span>${product.price.toFixed(2)} ₺</span>
+                        <span>${product.price.toFixed(0)} ₺</span>
                     </div>
                     <div class="product-actions">
                         <button class="icon-btn edit-btn" onclick="editProduct(${index})">✎</button>
@@ -1734,7 +1466,7 @@
             const price = parseFloat(document.getElementById('newProductPrice').value);
             
             if (!name || isNaN(price) || price < 0) {
-                alert('Lütfen geçerli ürün adı ve fiyat girin!');
+                alert('Geçersiz değer!');
                 return;
             }
             
@@ -1763,7 +1495,7 @@
             const price = parseFloat(document.getElementById('editProductPrice').value);
             
             if (!name || isNaN(price) || price < 0) {
-                alert('Lütfen geçerli değerler girin!');
+                alert('Geçersiz değer!');
                 return;
             }
             
@@ -1781,7 +1513,7 @@
         }
 
         function deleteProduct(index) {
-            if (confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
+            if (confirm('Ürün silinsin mi?')) {
                 products.splice(index, 1);
                 saveData();
                 renderProducts();
@@ -1790,33 +1522,18 @@
         }
 
         function resetDailyRevenue() {
-            if (confirm('Günlük ciroyu sıfırlamak istediğinize emin misiniz?')) {
+            if (confirm('Ciro sıfırlansın mı?')) {
                 dailyRevenue = 0;
                 saveData();
                 updateRevenueDisplays();
             }
         }
 
-        // Close modals on outside click
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('active');
             }
         }
-
-        // CSS Animations ekle
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideDown {
-                from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
-                to { transform: translateX(-50%) translateY(0); opacity: 1; }
-            }
-            @keyframes slideUp {
-                from { transform: translateX(-50%) translateY(0); opacity: 1; }
-                to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
