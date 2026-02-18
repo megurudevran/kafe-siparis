@@ -18,7 +18,7 @@
             -webkit-user-select: none;
             user-select: none;
         }
-          html, body {
+            html, body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
         color: #fff;
@@ -852,5 +852,836 @@
         opacity: 1;
     }
 </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar - Masalar -->
+        <div class="sidebar">
+            <h2>🪑 Masalar</h2>
+            <div id="tablesList" style="flex: 1; overflow-y: auto;"></div>
+            <button class="add-table-btn" onclick="addNewTable()">+ Masa Ekle</button>
+        </div>
+            <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1 id="currentTableName">Masa Seçin</h1>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <label>Bugün</label>
+                    <span id="dailyRevenue">0 ₺</span>
+                </div>
+                <div class="stat-box">
+                    <label>Hafta</label>
+                    <span id="weeklyRevenue">0 ₺</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Products Section -->
+            <div class="products-section">
+                <div class="section-title">
+                    <span>Ürünler</span>
+                    <small style="font-size: 12px; color: #aaa;">(Basılı tutup sürükleyin)</small>
+                </div>
+                <div class="products-grid" id="productsGrid"></div>
+            </div>
+
+            <!-- Order Section - HER ZAMAN AÇIK -->
+            <div class="order-section">
+                <div class="order-header">
+                    <h2>Sipariş Detayı</h2>
+                    <p>Masa: <span id="selectedTableDisplay">-</span></p>
+                </div>
+                <div class="order-items" id="orderItems">
+                    <div class="empty-state">
+                        <h3>Sipariş Yok</h3>
+                        <p>Ürün eklemek için sol taraftan seçin</p>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="total-amount">
+                        <span>Toplam:</span>
+                        <span id="totalAmount">0 ₺</span>
+                    </div>
+                    <button class="checkout-btn" onclick="checkout()">Hesabı Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Management Buttons -->
+<div class="management-btns">
+    <button class="mgmt-btn" onclick="openProductModal()">Ürünler</button>
+    <button class="mgmt-btn reports-btn" onclick="openReportsModal()">Raporlar</button>
+    <button class="mgmt-btn reset-day-btn" onclick="resetDailyRevenue()">Sıfırla</button>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<!-- Product Management Modal -->
+<div class="modal" id="productModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Ürün Yönetimi</h2>
+            <button class="close-btn" onclick="closeProductModal()">&times;</button>
+        </div>
+        
+        <div class="form-group">
+            <label>Ürün Adı</label>
+            <input type="text" id="newProductName" placeholder="Ürün adı girin">
+        </div>
+        <div class="form-group">
+            <label>Fiyat (₺)</label>
+            <input type="number" id="newProductPrice" placeholder="0.00" step="0.01">
+        </div>
+        <button class="btn-primary" onclick="addProduct()">Ürün Ekle</button>
+        
+        <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
+        
+        <h3 style="margin-bottom: 15px; color: #e94560; font-size: 18px;">Mevcut Ürünler</h3>
+        <div id="productList"></div>
+    </div>
+</div>
+
+<!-- Reports Modal -->
+<div class="modal" id="reportsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📊 Satış Raporları</h2>
+            <button class="close-btn" onclick="closeReportsModal()">&times;</button>
+        </div>
+        
+        <div class="reports-tabs">
+            <button class="tab-btn active" onclick="switchTab('daily')">Günlük</button>
+            <button class="tab-btn" onclick="switchTab('weekly')">Haftalık</button>
+            <button class="tab-btn" onclick="switchTab('all')">Tümü</button>
+        </div>
+
+        <div id="dailyReport" class="report-content active">
+            <button class="clear-all-btn" onclick="clearDailyOrders()">🗑️ Bugünkü Tüm Siparişleri Sil</button>
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Bugün Toplam</h3>
+                    <div class="amount" id="reportDailyTotal">0 ₺</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Sipariş Sayısı</h3>
+                    <div class="amount" id="reportDailyCount">0</div>
+                </div>
+            </div>
+            <h3 style="margin-bottom: 12px; color: #e94560; font-size: 16px;">Bugünkü Siparişler</h3>
+            <div class="orders-list" id="dailyOrdersList"></div>
+        </div>
+
+        <div id="weeklyReport" class="report-content">
+            <button class="clear-all-btn" onclick="clearWeeklyOrders()">🗑️ Haftalık Tüm Siparişleri Sil</button>
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Haftalık Toplam</h3>
+                    <div class="amount" id="reportWeeklyTotal">0 ₺</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Haftalık Sipariş</h3>
+                    <div class="amount" id="reportWeeklyCount">0</div>
+                </div>
+            </div>
+            <h3 style="margin-bottom: 12px; color: #e94560; font-size: 16px;">Haftalık Özet</h3>
+            <div class="orders-list" id="weeklyOrdersList"></div>
+        </div>
+
+        <div id="allReport" class="report-content">
+            <button class="clear-all-btn" onclick="clearAllOrders()">🗑️ Tüm Sipariş Geçmişini Sil</button>
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Genel Toplam</h3>
+                    <div class="amount" id="reportAllTotal">0 ₺</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Toplam Sipariş</h3>
+                    <div class="amount" id="reportAllCount">0</div>
+                </div>
+            </div>
+            <h3 style="margin-bottom: 12px; color: #e94560; font-size: 16px;">Tüm Sipariş Geçmişi</h3>
+            <div class="orders-list" id="allOrdersList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Ürün Düzenle</h2>
+            <button class="close-btn" onclick="closeEditModal()">&times;</button>
+        </div>
+        <input type="hidden" id="editProductId">
+        <div class="form-group">
+            <label>Ürün Adı</label>
+            <input type="text" id="editProductName">
+        </div>
+        <div class="form-group">
+            <label>Fiyat (₺)</label>
+            <input type="number" id="editProductPrice" step="0.01">
+        </div>
+        <button class="btn-primary" onclick="saveEditProduct()">Kaydet</button>
+        <button class="btn-secondary" onclick="closeEditModal()">İptal</button>
+    </div>
+</div>
+
+<script>
+    // Data Management
+    let tables = [];
+    let products = [];
+    let orders = {};
+    let dailyRevenue = 0;
+    let currentTable = null;
+    let draggedProduct = null;
+    let orderHistory = [];
+
+    const defaultProducts = [
+        { id: 1, name: 'Çay', price: 20 },
+        { id: 2, name: 'Oralet', price: 20 },
+        { id: 3, name: 'Soğuk İçecek', price: 70 },
+        { id: 4, name: 'Sade Soda', price: 25 },
+        { id: 5, name: 'Meyveli Soda', price: 30 },
+        { id: 6, name: 'Tost', price: 170 },
+        { id: 7, name: 'Yarım Tost', price: 85 },
+        { id: 8, name: 'Fındıklı İçecek', price: 110 },
+        { id: 9, name: 'Ayran', price: 30 },
+        { id: 10, name: 'Kuşburnu', price: 80 },
+        { id: 11, name: 'Nescafe', price: 60 },
+        { id: 12, name: 'Sütlü Nescafe', price: 80 },
+        { id: 13, name: 'Sütlaç', price: 110 },
+        { id: 14, name: 'Fındık Tabağı', price: 70 },
+        { id: 15, name: 'Churchill', price: 60 },
+        { id: 16, name: 'Kek', price: 20 },
+        { id: 17, name: 'Çikolata', price: 30 },
+        { id: 18, name: 'Cips', price: 35 },
+        { id: 19, name: 'Sahlep', price: 90 },
+        { id: 20, name: 'Redbull', price: 90 },
+        { id: 21, name: 'Bisküvi', price: 35 }
+    ];
+
+    window.onload = function() {
+        loadData();
+        renderTables();
+        renderProducts();
+        updateRevenueDisplays();
+        
+        if (tables.length > 0 && !currentTable) {
+            selectTable(tables[0].id);
+        }
+    };
+
+    function saveData() {
+        localStorage.setItem('cafe_tables', JSON.stringify(tables));
+        localStorage.setItem('cafe_products', JSON.stringify(products));
+        localStorage.setItem('cafe_orders', JSON.stringify(orders));
+        localStorage.setItem('cafe_dailyRevenue', dailyRevenue);
+        localStorage.setItem('cafe_lastResetDate', new Date().toDateString());
+        localStorage.setItem('cafe_orderHistory', JSON.stringify(orderHistory));
+    }
+
+    function loadData() {
+        const savedTables = localStorage.getItem('cafe_tables');
+        const savedProducts = localStorage.getItem('cafe_products');
+        const savedOrders = localStorage.getItem('cafe_orders');
+        const savedRevenue = localStorage.getItem('cafe_dailyRevenue');
+        const lastResetDate = localStorage.getItem('cafe_lastResetDate');
+        const savedHistory = localStorage.getItem('cafe_orderHistory');
+        
+        const today = new Date().toDateString();
+        
+        if (savedHistory) orderHistory = JSON.parse(savedHistory);
+        
+        if (lastResetDate !== today) {
+            dailyRevenue = 0;
+            orders = {};
+        } else {
+            dailyRevenue = savedRevenue ? parseFloat(savedRevenue) : 0;
+            orders = savedOrders ? JSON.parse(savedOrders) : {};
+        }
+        
+        // MASA SIRALAMASI: Önce 1-19, sonra özel masalar
+        if (savedTables) {
+            tables = JSON.parse(savedTables);
+        } else {
+            tables = [];
+            // Önce normal masalar 1-19
+            for (let i = 1; i <= 19; i++) {
+                tables.push({ id: i, name: `Masa ${i}` });
+            }
+            // Sonra özel masalar en altta
+            tables.push(
+                { id: 20, name: 'Kasa Önü' },
+                { id: 21, name: 'Cam' },
+                { id: 22, name: 'Cam 2' }
+            );
+        }
+        
+        if (savedProducts) {
+            products = JSON.parse(savedProducts);
+            defaultProducts.forEach(defaultProd => {
+                const exists = products.find(p => p.name.toLowerCase() === defaultProd.name.toLowerCase());
+                if (!exists) {
+                    const maxId = Math.max(...products.map(p => p.id), 0);
+                    products.push({ ...defaultProd, id: maxId + 1 });
+                } else {
+                    exists.price = defaultProd.price;
+                }
+            });
+        } else {
+            products = [...defaultProducts];
+        }
+        
+        saveData();
+    }
+
+    function calculateWeeklyRevenue() {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        
+        return orderHistory
+            .filter(order => new Date(order.date) >= oneWeekAgo)
+            .reduce((sum, order) => sum + order.total, 0);
+    }
+
+    function updateRevenueDisplays() {
+        document.getElementById('dailyRevenue').textContent = dailyRevenue.toFixed(0) + ' ₺';
+        document.getElementById('weeklyRevenue').textContent = calculateWeeklyRevenue().toFixed(0) + ' ₺';
+    }
+
+    function renderTables() {
+        const container = document.getElementById('tablesList');
+        container.innerHTML = '';
+        
+        tables.forEach(table => {
+            const btn = document.createElement('button');
+            btn.className = 'table-btn';
+            if (currentTable === table.id) btn.classList.add('active');
+            if (orders[table.id] && orders[table.id].length > 0) btn.classList.add('has-order');
+            btn.textContent = table.name;
+            btn.onclick = () => selectTable(table.id);
+            container.appendChild(btn);
+        });
+    }
+
+    function selectTable(tableId) {
+        currentTable = tableId;
+        const table = tables.find(t => t.id === tableId);
+        document.getElementById('currentTableName').textContent = table.name;
+        document.getElementById('selectedTableDisplay').textContent = table.name;
+        renderTables();
+        renderOrder();
+    }
+
+    function addNewTable() {
+        const maxId = Math.max(...tables.map(t => t.id), 0);
+        const newId = maxId + 1;
+        const name = prompt('Masa adı:', `Masa ${newId}`);
+        if (name) {
+            tables.push({ id: newId, name: name });
+            saveData();
+            renderTables();
+            selectTable(newId);
+        }
+    }
+
+    function renderProducts() {
+        const grid = document.getElementById('productsGrid');
+        grid.innerHTML = '';
+        
+        products.forEach((product, index) => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.dataset.index = index;
+            card.innerHTML = `
+                <h3>${product.name}</h3>
+                <div class="price">${product.price.toFixed(0)} ₺</div>
+                <button class="add-btn" onclick="addToOrder(${product.id})">EKLE</button>
+            `;
+            
+            // Touch events
+            let touchStartTime;
+            let isDragging = false;
+            let longPressTimer;
+            
+            card.addEventListener('touchstart', (e) => {
+                touchStartTime = new Date().getTime();
+                longPressTimer = setTimeout(() => {
+                    isDragging = true;
+                    card.classList.add('dragging');
+                }, 500);
+            }, {passive: false});
+            
+            card.addEventListener('touchmove', (e) => {
+                if (!isDragging) {
+                    clearTimeout(longPressTimer);
+                    return;
+                }
+                e.preventDefault();
+                
+                const touch = e.touches[0];
+                const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                const targetCard = elementBelow?.closest('.product-card');
+                
+                document.querySelectorAll('.product-card').forEach(c => c.classList.remove('drag-over'));
+                if (targetCard && targetCard !== card) {
+                    targetCard.classList.add('drag-over');
+                }
+            }, {passive: false});
+            
+            card.addEventListener('touchend', (e) => {
+                clearTimeout(longPressTimer);
+                const touchDuration = new Date().getTime() - touchStartTime;
+                
+                if (isDragging) {
+                    const touch = e.changedTouches[0];
+                    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const targetCard = elementBelow?.closest('.product-card');
+                    
+                    if (targetCard && targetCard !== card) {
+                        const targetIndex = parseInt(targetCard.dataset.index);
+                        swapProducts(index, targetIndex);
+                    }
+                    
+                    card.classList.remove('dragging');
+                    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('drag-over'));
+                    isDragging = false;
+                } else if (touchDuration < 500) {
+                    addToOrder(product.id);
+                }
+            });
+            
+            // Mouse events
+            card.draggable = true;
+            card.addEventListener('dragstart', (e) => {
+                draggedProduct = index;
+                card.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+                document.querySelectorAll('.product-card').forEach(c => c.classList.remove('drag-over'));
+            });
+            
+            card.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+            
+            card.addEventListener('dragenter', (e) => {
+                e.preventDefault();
+                card.classList.add('drag-over');
+            });
+            
+            card.addEventListener('dragleave', () => {
+                card.classList.remove('drag-over');
+            });
+            
+            card.addEventListener('drop', (e) => {
+                e.preventDefault();
+                card.classList.remove('drag-over');
+                if (draggedProduct !== null && draggedProduct !== index) {
+                    swapProducts(draggedProduct, index);
+                }
+            });
+            
+            grid.appendChild(card);
+        });
+    }
+
+    function swapProducts(fromIndex, toIndex) {
+        const temp = products[fromIndex];
+        products[fromIndex] = products[toIndex];
+        products[toIndex] = temp;
+        saveData();
+        renderProducts();
+        showToast('Ürün sırası değiştirildi');
+    }
+
+    function addToOrder(productId) {
+        if (!currentTable) {
+            showToast('Önce masa seçin!');
+            return;
+        }
+        
+        const product = products.find(p => p.id === productId);
+        if (!orders[currentTable]) orders[currentTable] = [];
+        
+        const existingItem = orders[currentTable].find(item => item.productId === productId);
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            orders[currentTable].push({
+                productId: productId,
+                name: product.name,
+                price: product.price,
+                quantity: 1
+            });
+        }
+        
+        saveData();
+        renderOrder();
+        renderTables();
+    }
+
+    function renderOrder() {
+        const container = document.getElementById('orderItems');
+        const tableOrders = orders[currentTable] || [];
+        
+        if (tableOrders.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h3>Sipariş Yok</h3>
+                    <p>Ürün eklemek için sol taraftan seçin</p>
+                </div>
+            `;
+            document.getElementById('totalAmount').textContent = '0 ₺';
+            return;
+        }
+        
+        container.innerHTML = '';
+        let total = 0;
+        
+        tableOrders.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+            
+            const div = document.createElement('div');
+            div.className = 'order-item';
+            div.innerHTML = `
+                <div class="order-item-info">
+                    <h4>${item.name}</h4>
+                    <span>${item.price.toFixed(0)}₺ x ${item.quantity}</span>
+                </div>
+                <div class="order-item-actions">
+                    <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">−</button>
+                    <span style="font-size: 15px; font-weight: bold;">${item.quantity}</span>
+                    <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                    <button class="remove-item" onclick="removeItem(${index})">×</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        
+        document.getElementById('totalAmount').textContent = total.toFixed(0) + ' ₺';
+    }
+
+    function updateQuantity(index, change) {
+        const item = orders[currentTable][index];
+        item.quantity += change;
+        
+        if (item.quantity <= 0) {
+            orders[currentTable].splice(index, 1);
+        }
+        
+        saveData();
+        renderOrder();
+        renderTables();
+    }
+
+    function removeItem(index) {
+        orders[currentTable].splice(index, 1);
+        saveData();
+        renderOrder();
+        renderTables();
+    }
+
+    function checkout() {
+        if (!orders[currentTable] || orders[currentTable].length === 0) {
+            showToast('Sipariş yok!');
+            return;
+        }
+        
+        const total = orders[currentTable].reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const orderItems = [...orders[currentTable]];
+        const tableName = tables.find(t => t.id === currentTable).name;
+        
+        const orderRecord = {
+            id: Date.now(),
+            date: new Date().toISOString(),
+            tableName: tableName,
+            items: orderItems,
+            total: total,
+            formattedDate: new Date().toLocaleString('tr-TR', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+        };
+        
+        orderHistory.unshift(orderRecord);
+        dailyRevenue += total;
+        
+        orders[currentTable] = [];
+        saveData();
+        
+        updateRevenueDisplays();
+        renderOrder();
+        renderTables();
+        
+        showToast(`${tableName} - ${total.toFixed(0)} ₺ Hesap kapatıldı`);
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2500);
+    }
+
+    function openReportsModal() {
+        document.getElementById('reportsModal').classList.add('active');
+        updateReports();
+    }
+
+    function closeReportsModal() {
+        document.getElementById('reportsModal').classList.remove('active');
+    }
+
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.report-content').forEach(content => content.classList.remove('active'));
+        
+        event.target.classList.add('active');
+        document.getElementById(tab + 'Report').classList.add('active');
+        
+        updateReports();
+    }
+
+    function updateReports() {
+        const today = new Date().toDateString();
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        
+        const dailyOrders = orderHistory.filter(order => 
+            new Date(order.date).toDateString() === today
+        );
+        const dailyTotal = dailyOrders.reduce((sum, order) => sum + order.total, 0);
+        
+        document.getElementById('reportDailyTotal').textContent = dailyTotal.toFixed(0) + ' ₺';
+        document.getElementById('reportDailyCount').textContent = dailyOrders.length;
+        renderOrdersList(dailyOrders, 'dailyOrdersList');
+        
+        const weeklyOrders = orderHistory.filter(order => 
+            new Date(order.date) >= oneWeekAgo
+        );
+        const weeklyTotal = weeklyOrders.reduce((sum, order) => sum + order.total, 0);
+        
+        document.getElementById('reportWeeklyTotal').textContent = weeklyTotal.toFixed(0) + ' ₺';
+        document.getElementById('reportWeeklyCount').textContent = weeklyOrders.length;
+        renderOrdersList(weeklyOrders, 'weeklyOrdersList');
+        
+        const allTotal = orderHistory.reduce((sum, order) => sum + order.total, 0);
+        document.getElementById('reportAllTotal').textContent = allTotal.toFixed(0) + ' ₺';
+        document.getElementById('reportAllCount').textContent = orderHistory.length;
+        renderOrdersList(orderHistory, 'allOrdersList');
+    }
+
+    function renderOrdersList(orders, containerId) {
+        const container = document.getElementById(containerId);
+        
+        if (orders.length === 0) {
+            container.innerHTML = '<div class="no-data">Kayıt bulunmamaktadır</div>';
+            return;
+        }
+        
+        container.innerHTML = orders.map(order => `
+            <div class="order-record">
+                <button class="delete-order-btn" onclick="deleteSingleOrder(${order.id})">×</button>
+                <div class="order-record-header">
+                    <h4>${order.tableName}</h4>
+                    <span class="date">${order.formattedDate}</span>
+                </div>
+                <div class="order-record-items">
+                    ${order.items.map(item => `${item.name}(${item.quantity})`).join(', ')}
+                </div>
+                <div class="order-record-total">${order.total.toFixed(0)} ₺</div>
+            </div>
+        `).join('');
+    }
+
+    function deleteSingleOrder(orderId) {
+        if (!confirm('Bu sipariş silinsin mi?')) return;
+        
+        const orderIndex = orderHistory.findIndex(o => o.id === orderId);
+        if (orderIndex > -1) {
+            const deletedOrder = orderHistory[orderIndex];
+            orderHistory.splice(orderIndex, 1);
+            
+            const today = new Date().toDateString();
+            if (new Date(deletedOrder.date).toDateString() === today) {
+                dailyRevenue = Math.max(0, dailyRevenue - deletedOrder.total);
+            }
+            
+            saveData();
+            updateRevenueDisplays();
+            updateReports();
+            showToast('Sipariş silindi');
+        }
+    }
+
+    function clearDailyOrders() {
+        const today = new Date().toDateString();
+        const todayOrders = orderHistory.filter(o => new Date(o.date).toDateString() === today);
+        
+        if (todayOrders.length === 0) return;
+        
+        if (confirm(`${todayOrders.length} sipariş silinsin mi?`)) {
+            orderHistory = orderHistory.filter(o => new Date(o.date).toDateString() !== today);
+            dailyRevenue = 0;
+            saveData();
+            updateRevenueDisplays();
+            updateReports();
+            showToast('Bugünkü siparişler silindi');
+        }
+    }
+
+    function clearWeeklyOrders() {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        
+        const weeklyOrders = orderHistory.filter(o => new Date(o.date) >= oneWeekAgo);
+        
+        if (weeklyOrders.length === 0) return;
+        
+        if (confirm(`${weeklyOrders.length} sipariş silinsin mi?`)) {
+            orderHistory = orderHistory.filter(o => new Date(o.date) < oneWeekAgo);
+            dailyRevenue = 0;
+            saveData();
+            updateRevenueDisplays();
+            updateReports();
+            showToast('Haftalık siparişler silindi');
+        }
+    }
+
+    function clearAllOrders() {
+        if (orderHistory.length === 0) return;
+        
+        if (confirm(`TÜM ${orderHistory.length} sipariş silinsin mi?`)) {
+            orderHistory = [];
+            dailyRevenue = 0;
+            saveData();
+            updateRevenueDisplays();
+            updateReports();
+            showToast('Tüm sipariş geçmişi silindi');
+        }
+    }
+
+    function openProductModal() {
+        document.getElementById('productModal').classList.add('active');
+        renderProductList();
+    }
+
+    function closeProductModal() {
+        document.getElementById('productModal').classList.remove('active');
+    }
+
+    function renderProductList() {
+        const container = document.getElementById('productList');
+        container.innerHTML = '';
+        
+        products.forEach((product, index) => {
+            const div = document.createElement('div');
+            div.className = 'product-list-item';
+            div.innerHTML = `
+                <div>
+                    <h4>${product.name}</h4>
+                    <span>${product.price.toFixed(0)} ₺</span>
+                </div>
+                <div class="product-actions">
+                    <button class="icon-btn edit-btn" onclick="editProduct(${index})">✎</button>
+                    <button class="icon-btn delete-btn" onclick="deleteProduct(${index})">🗑</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function addProduct() {
+        const name = document.getElementById('newProductName').value.trim();
+        const price = parseFloat(document.getElementById('newProductPrice').value);
+        
+        if (!name || isNaN(price) || price < 0) {
+            showToast('Geçersiz değer!');
+            return;
+        }
+        
+        const maxId = Math.max(...products.map(p => p.id), 0);
+        products.push({ id: maxId + 1, name: name, price: price });
+        
+        document.getElementById('newProductName').value = '';
+        document.getElementById('newProductPrice').value = '';
+        
+        saveData();
+        renderProducts();
+        renderProductList();
+        showToast('Ürün eklendi');
+    }
+
+    function editProduct(index) {
+        const product = products[index];
+        document.getElementById('editProductId').value = index;
+        document.getElementById('editProductName').value = product.name;
+        document.getElementById('editProductPrice').value = product.price;
+        document.getElementById('editModal').classList.add('active');
+    }
+
+    function saveEditProduct() {
+        const index = parseInt(document.getElementById('editProductId').value);
+        const name = document.getElementById('editProductName').value.trim();
+        const price = parseFloat(document.getElementById('editProductPrice').value);
+        
+        if (!name || isNaN(price) || price < 0) {
+            showToast('Geçersiz değer!');
+            return;
+        }
+        
+        products[index].name = name;
+        products[index].price = price;
+        
+        saveData();
+        renderProducts();
+        renderProductList();
+        closeEditModal();
+        showToast('Ürün güncellendi');
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').classList.remove('active');
+    }
+
+    function deleteProduct(index) {
+        if (confirm('Ürün silinsin mi?')) {
+            products.splice(index, 1);
+            saveData();
+            renderProducts();
+            renderProductList();
+            showToast('Ürün silindi');
+        }
+    }
+
+    function resetDailyRevenue() {
+        if (confirm('Günlük ciro sıfırlansın mı?')) {
+            dailyRevenue = 0;
+            saveData();
+            updateRevenueDisplays();
+            showToast('Ciro sıfırlandı');
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.classList.remove('active');
+        }
+    }
+</script>
 </body>
 </html>
