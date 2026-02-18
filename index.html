@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kafe Yönetim Sistemi</title>
+    <title>Kafe Pro - Tablet Yönetim Sistemi</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         body {
@@ -18,6 +19,7 @@
             color: #fff;
             height: 100vh;
             overflow: hidden;
+            user-select: none;
         }
 
         .container {
@@ -27,11 +29,13 @@
 
         /* Sidebar - Masalar */
         .sidebar {
-            width: 200px;
-            background: rgba(0,0,0,0.3);
+            width: 220px;
+            background: rgba(0,0,0,0.4);
             padding: 15px;
             overflow-y: auto;
             border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar h2 {
@@ -39,14 +43,16 @@
             margin-bottom: 15px;
             color: #e94560;
             text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(233, 69, 96, 0.3);
         }
 
         .table-btn {
             width: 100%;
-            padding: 15px;
-            margin-bottom: 10px;
+            padding: 18px;
+            margin-bottom: 12px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             background: rgba(255,255,255,0.1);
             color: #fff;
             font-size: 16px;
@@ -54,6 +60,12 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .table-btn:active {
+            transform: scale(0.95);
         }
 
         .table-btn:hover {
@@ -62,32 +74,40 @@
         }
 
         .table-btn.active {
-            background: #e94560;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
             box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
         }
 
         .table-btn.has-order::after {
             content: '●';
             position: absolute;
-            right: 10px;
+            right: 15px;
             color: #ffd700;
-            font-size: 12px;
+            font-size: 14px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .add-table-btn {
             width: 100%;
-            padding: 12px;
-            margin-top: 10px;
+            padding: 15px;
+            margin-top: auto;
             border: 2px dashed rgba(255,255,255,0.3);
-            border-radius: 10px;
+            border-radius: 12px;
             background: transparent;
             color: #fff;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
             transition: all 0.3s;
+            font-weight: 500;
         }
 
-        .add-table-btn:hover {
+        .add-table-btn:active {
+            transform: scale(0.95);
             border-color: #e94560;
             color: #e94560;
         }
@@ -101,30 +121,50 @@
         }
 
         .header {
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.3);
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header h1 {
-            font-size: 24px;
+            font-size: 26px;
             color: #fff;
+            margin: 0;
         }
 
-        .daily-revenue {
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
             background: rgba(233, 69, 96, 0.2);
-            padding: 10px 20px;
-            border-radius: 20px;
-            border: 1px solid #e94560;
+            padding: 12px 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(233, 69, 96, 0.5);
+            text-align: center;
+            min-width: 140px;
         }
 
-        .daily-revenue span {
+        .stat-box label {
+            display: block;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-box span {
             color: #e94560;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 22px;
         }
 
         /* Content Area */
@@ -139,11 +179,12 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
+            position: relative;
         }
 
         .section-title {
-            font-size: 20px;
-            margin-bottom: 15px;
+            font-size: 22px;
+            margin-bottom: 20px;
             color: #e94560;
             display: flex;
             justify-content: space-between;
@@ -152,97 +193,121 @@
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 18px;
             margin-bottom: 20px;
+            padding-bottom: 80px;
         }
 
         .product-card {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 15px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 16px;
+            padding: 18px;
             text-align: center;
-            cursor: move;
             transition: all 0.3s;
             position: relative;
             border: 2px solid transparent;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            touch-action: none;
         }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255,255,255,0.15);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        .product-card:active {
+            transform: scale(0.95);
         }
 
         .product-card.dragging {
-            opacity: 0.5;
+            opacity: 0.6;
             border: 2px dashed #e94560;
+            transform: scale(1.05);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .product-card.drag-over {
+            border: 2px solid #e94560;
+            transform: scale(1.02);
+            background: rgba(233, 69, 96, 0.1);
         }
 
         .product-card h3 {
-            font-size: 16px;
-            margin-bottom: 8px;
+            font-size: 15px;
+            margin-bottom: 10px;
             color: #fff;
+            line-height: 1.3;
+            font-weight: 500;
         }
 
         .product-card .price {
             color: #e94560;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
+            margin-bottom: 10px;
         }
 
         .product-card .add-btn {
-            margin-top: 10px;
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             border: none;
-            border-radius: 8px;
-            background: #e94560;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
             color: #fff;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 600;
             transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(233, 69, 96, 0.3);
         }
 
-        .product-card .add-btn:hover {
-            background: #ff6b6b;
+        .product-card .add-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(233, 69, 96, 0.3);
         }
 
         /* Order Section */
         .order-section {
-            width: 350px;
-            background: rgba(0,0,0,0.2);
+            width: 380px;
+            background: rgba(0,0,0,0.3);
             border-left: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
         }
 
         .order-header {
-            padding: 20px;
-            background: rgba(233, 69, 96, 0.2);
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.3), rgba(233, 69, 96, 0.1));
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .order-header h2 {
-            font-size: 20px;
-            margin-bottom: 5px;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .order-header p {
+            color: #aaa;
+            font-size: 15px;
         }
 
         .order-items {
             flex: 1;
             overflow-y: auto;
-            padding: 15px;
+            padding: 20px;
         }
 
         .order-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
+            padding: 15px;
             background: rgba(255,255,255,0.05);
-            margin-bottom: 10px;
-            border-radius: 10px;
+            margin-bottom: 12px;
+            border-radius: 12px;
             animation: slideIn 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         @keyframes slideIn {
@@ -251,61 +316,75 @@
         }
 
         .order-item-info h4 {
-            font-size: 16px;
-            margin-bottom: 5px;
+            font-size: 17px;
+            margin-bottom: 6px;
+            font-weight: 500;
         }
 
         .order-item-info span {
             color: #e94560;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 600;
         }
 
         .order-item-actions {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
         }
 
         .quantity-btn {
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             border: none;
             border-radius: 50%;
             background: rgba(255,255,255,0.2);
             color: #fff;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s;
+            font-weight: bold;
         }
 
-        .quantity-btn:hover {
+        .quantity-btn:active {
             background: #e94560;
+            transform: scale(0.9);
         }
 
         .remove-item {
             background: #ff4444;
             border: none;
             color: #fff;
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .remove-item:active {
+            transform: scale(0.9);
+            background: #ff6666;
         }
 
         .order-footer {
-            padding: 20px;
-            background: rgba(0,0,0,0.3);
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 25px;
+            background: rgba(0,0,0,0.4);
+            border-top: 2px solid rgba(233, 69, 96, 0.3);
         }
 
         .total-amount {
             display: flex;
             justify-content: space-between;
-            font-size: 24px;
-            margin-bottom: 15px;
+            font-size: 26px;
+            margin-bottom: 20px;
             font-weight: bold;
         }
 
@@ -315,25 +394,62 @@
 
         .checkout-btn {
             width: 100%;
-            padding: 15px;
+            padding: 18px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             background: linear-gradient(135deg, #e94560, #ff6b6b);
             color: #fff;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
         }
 
-        .checkout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+        .checkout-btn:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 3px 10px rgba(233, 69, 96, 0.3);
         }
 
-        /* Management Modal */
+        /* Management Buttons */
+        .management-btns {
+            position: fixed;
+            bottom: 25px;
+            left: 240px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .mgmt-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            color: #fff;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        .mgmt-btn:active {
+            transform: translateY(-2px) scale(0.95);
+        }
+
+        .reports-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+
+        .reset-day-btn {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: #000;
+        }
+
+        /* Modals */
         .modal {
             display: none;
             position: fixed;
@@ -341,10 +457,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(5px);
         }
 
         .modal.active {
@@ -352,116 +469,273 @@
         }
 
         .modal-content {
-            background: #1a1a2e;
-            border-radius: 20px;
-            padding: 30px;
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border-radius: 24px;
+            padding: 35px;
             width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
+            max-width: 700px;
+            max-height: 85vh;
             overflow-y: auto;
             border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(233, 69, 96, 0.3);
         }
 
         .modal-header h2 {
             color: #e94560;
+            font-size: 26px;
         }
 
         .close-btn {
             background: none;
             border: none;
             color: #fff;
-            font-size: 30px;
+            font-size: 36px;
             cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
         }
 
+        .close-btn:active {
+            background: rgba(255,255,255,0.1);
+            transform: rotate(90deg);
+        }
+
+        /* Reports Styles */
+        .reports-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .report-content {
+            display: none;
+        }
+
+        .report-content.active {
+            display: block;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .summary-card h3 {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .summary-card .amount {
+            font-size: 28px;
+            color: #e94560;
+            font-weight: bold;
+        }
+
+        .orders-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .order-record {
+            background: rgba(255,255,255,0.05);
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border-left: 4px solid #e94560;
+        }
+
+        .order-record-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .order-record h4 {
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .order-record .date {
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .order-record-items {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .order-record-total {
+            text-align: right;
+            color: #e94560;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Form Elements */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             color: #aaa;
+            font-size: 15px;
+            font-weight: 500;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
+            padding: 14px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
             background: rgba(255,255,255,0.1);
             color: #fff;
-            font-size: 16px;
+            font-size: 17px;
+            transition: all 0.3s;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: #e94560;
+            background: rgba(255,255,255,0.15);
         }
 
         .btn-primary {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 8px;
-            background: #e94560;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
             color: #fff;
-            font-size: 16px;
+            font-size: 17px;
             cursor: pointer;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
         }
 
         .btn-secondary {
             width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 8px;
+            padding: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
             background: transparent;
             color: #fff;
-            font-size: 16px;
+            font-size: 17px;
             cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:active {
+            background: rgba(255,255,255,0.1);
         }
 
         .product-list-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
+            padding: 18px;
             background: rgba(255,255,255,0.05);
-            margin-bottom: 10px;
-            border-radius: 10px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .product-list-item h4 {
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            font-size: 16px;
         }
 
         .product-list-item span {
             color: #e94560;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .product-actions {
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
 
         .icon-btn {
-            width: 35px;
-            height: 35px;
+            width: 42px;
+            height: 42px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.9);
         }
 
         .edit-btn {
@@ -474,80 +748,70 @@
             color: #fff;
         }
 
-        /* Management Buttons */
-        .management-btns {
-            position: fixed;
-            bottom: 20px;
-            left: 220px;
-            display: flex;
-            gap: 10px;
-            z-index: 100;
-        }
-
-        .mgmt-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(233, 69, 96, 0.9);
-            color: #fff;
-            cursor: pointer;
-            font-size: 14px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            transition: all 0.3s;
-        }
-
-        .mgmt-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
-        }
-
-        .reset-day-btn {
-            background: rgba(255, 193, 7, 0.9);
-            color: #000;
-        }
-
         /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 10px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
         }
 
         ::-webkit-scrollbar-thumb {
             background: #e94560;
-            border-radius: 4px;
+            border-radius: 5px;
         }
 
-        /* Drag and Drop Visual Feedback */
-        .drag-over {
-            border: 2px dashed #e94560 !important;
-            background: rgba(233, 69, 96, 0.1) !important;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff6b6b;
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 40px;
-            color: rgba(255,255,255,0.5);
+            padding: 50px;
+            color: rgba(255,255,255,0.4);
         }
 
         .empty-state h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* Drag hint */
+        .drag-hint {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #aaa;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .drag-hint.show {
+            opacity: 1;
         }
 
         /* Responsive */
         @media (max-width: 1024px) {
             .sidebar {
-                width: 180px;
+                width: 200px;
             }
             .order-section {
-                width: 300px;
+                width: 320px;
             }
             .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            .management-btns {
+                left: 220px;
             }
         }
     </style>
@@ -557,7 +821,7 @@
         <!-- Sidebar - Masalar -->
         <div class="sidebar">
             <h2>🪑 Masalar</h2>
-            <div id="tablesList"></div>
+            <div id="tablesList" style="flex: 1; overflow-y: auto;"></div>
             <button class="add-table-btn" onclick="addNewTable()">+ Yeni Masa Ekle</button>
         </div>
 
@@ -565,8 +829,15 @@
         <div class="main-content">
             <div class="header">
                 <h1 id="currentTableName">Masa Seçin</h1>
-                <div class="daily-revenue">
-                    Günlük Ciro: <span id="dailyRevenue">0 ₺</span>
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <label>Bugünkü Ciro</label>
+                        <span id="dailyRevenue">0 ₺</span>
+                    </div>
+                    <div class="stat-box">
+                        <label>Haftalık Ciro</label>
+                        <span id="weeklyRevenue">0 ₺</span>
+                    </div>
                 </div>
             </div>
 
@@ -575,18 +846,16 @@
                 <div class="products-section">
                     <div class="section-title">
                         <span>Ürünler</span>
-                        <small style="font-size: 12px; color: #aaa;">(Sürükleyerek sıralayabilirsiniz)</small>
+                        <small style="font-size: 13px; color: #aaa;">(Basılı tutup sürükleyin)</small>
                     </div>
-                    <div class="products-grid" id="productsGrid">
-                        <!-- Products will be loaded here -->
-                    </div>
+                    <div class="products-grid" id="productsGrid"></div>
                 </div>
 
                 <!-- Order Section -->
                 <div class="order-section">
                     <div class="order-header">
                         <h2>Sipariş Detayı</h2>
-                        <p style="color: #aaa; font-size: 14px;">Masa: <span id="selectedTableDisplay">-</span></p>
+                        <p>Masa: <span id="selectedTableDisplay">-</span></p>
                     </div>
                     <div class="order-items" id="orderItems">
                         <div class="empty-state">
@@ -609,8 +878,11 @@
     <!-- Management Buttons -->
     <div class="management-btns">
         <button class="mgmt-btn" onclick="openProductModal()">Ürün Yönetimi</button>
+        <button class="mgmt-btn reports-btn" onclick="openReportsModal()">📊 Raporlar</button>
         <button class="mgmt-btn reset-day-btn" onclick="resetDailyRevenue()">Günü Sıfırla</button>
     </div>
+
+    <div class="drag-hint" id="dragHint">Sürüklemek için basılı tutun</div>
 
     <!-- Product Management Modal -->
     <div class="modal" id="productModal">
@@ -630,10 +902,71 @@
             </div>
             <button class="btn-primary" onclick="addProduct()">Ürün Ekle</button>
             
-            <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
+            <hr style="margin: 25px 0; border-color: rgba(255,255,255,0.1);">
             
-            <h3 style="margin-bottom: 15px; color: #e94560;">Mevcut Ürünler</h3>
+            <h3 style="margin-bottom: 20px; color: #e94560;">Mevcut Ürünler</h3>
             <div id="productList"></div>
+        </div>
+    </div>
+
+    <!-- Reports Modal -->
+    <div class="modal" id="reportsModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>📊 Satış Raporları</h2>
+                <button class="close-btn" onclick="closeReportsModal()">&times;</button>
+            </div>
+            
+            <div class="reports-tabs">
+                <button class="tab-btn active" onclick="switchTab('daily')">Günlük</button>
+                <button class="tab-btn" onclick="switchTab('weekly')">Haftalık</button>
+                <button class="tab-btn" onclick="switchTab('all')">Tümü</button>
+            </div>
+
+            <div id="dailyReport" class="report-content active">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>Bugün Toplam</h3>
+                        <div class="amount" id="reportDailyTotal">0 ₺</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Sipariş Sayısı</h3>
+                        <div class="amount" id="reportDailyCount">0</div>
+                    </div>
+                </div>
+                <h3 style="margin-bottom: 15px; color: #e94560;">Bugünkü Siparişler</h3>
+                <div class="orders-list" id="dailyOrdersList"></div>
+            </div>
+
+            <div id="weeklyReport" class="report-content">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>Haftalık Toplam</h3>
+                        <div class="amount" id="reportWeeklyTotal">0 ₺</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Haftalık Sipariş</h3>
+                        <div class="amount" id="reportWeeklyCount">0</div>
+                    </div>
+                </div>
+                <h3 style="margin-bottom: 15px; color: #e94560;">Haftalık Özet</h3>
+                <div class="orders-list" id="weeklyOrdersList"></div>
+            </div>
+
+            <div id="allReport" class="report-content">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>Genel Toplam</h3>
+                        <div class="amount" id="reportAllTotal">0 ₺</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Toplam Sipariş</h3>
+                        <div class="amount" id="reportAllCount">0</div>
+                    </div>
+                </div>
+                <h3 style="margin-bottom: 15px; color: #e94560;">Tüm Sipariş Geçmişi</h3>
+                <div class="orders-list" id="allOrdersList"></div>
+            </div>
         </div>
     </div>
 
@@ -666,13 +999,41 @@
         let dailyRevenue = 0;
         let currentTable = null;
         let draggedProduct = null;
+        let touchStartY = 0;
+        let touchStartX = 0;
+        let orderHistory = [];
+
+        // Yeni ürün listesi
+        const defaultProducts = [
+            { id: 1, name: 'Çay', price: 20 },
+            { id: 2, name: 'Oralet', price: 20 },
+            { id: 3, name: 'Soğuk İçecekler', price: 70 },
+            { id: 4, name: 'Sade Soda', price: 25 },
+            { id: 5, name: 'Meyveli Soda', price: 30 },
+            { id: 6, name: 'Tost', price: 170 },
+            { id: 7, name: 'Yarım Tost', price: 85 },
+            { id: 8, name: 'Fındıklı İçecekler', price: 110 },
+            { id: 9, name: 'Ayran', price: 30 },
+            { id: 10, name: 'Kuşburnu', price: 80 },
+            { id: 11, name: 'Nescafe', price: 60 },
+            { id: 12, name: 'Sütlü', price: 80 },
+            { id: 13, name: 'Sütlaç', price: 110 },
+            { id: 14, name: 'Fındık Tabağı', price: 70 },
+            { id: 15, name: 'Churchill', price: 60 },
+            { id: 16, name: 'Kek', price: 20 },
+            { id: 17, name: 'Çikolata', price: 30 },
+            { id: 18, name: 'Cips', price: 35 },
+            { id: 19, name: 'Sahlep - Sıcak Çikolata', price: 90 },
+            { id: 20, name: 'Redbull', price: 90 },
+            { id: 21, name: 'Bisküvi', price: 35 }
+        ];
 
         // Initialize
         window.onload = function() {
             loadData();
             renderTables();
             renderProducts();
-            updateDailyRevenueDisplay();
+            updateRevenueDisplays();
             
             if (tables.length > 0 && !currentTable) {
                 selectTable(tables[0].id);
@@ -686,6 +1047,8 @@
             localStorage.setItem('cafe_orders', JSON.stringify(orders));
             localStorage.setItem('cafe_dailyRevenue', dailyRevenue);
             localStorage.setItem('cafe_lastResetDate', new Date().toDateString());
+            localStorage.setItem('cafe_orderHistory', JSON.stringify(orderHistory));
+            localStorage.setItem('cafe_weeklyRevenue', calculateWeeklyRevenue());
         }
 
         function loadData() {
@@ -694,10 +1057,28 @@
             const savedOrders = localStorage.getItem('cafe_orders');
             const savedRevenue = localStorage.getItem('cafe_dailyRevenue');
             const lastResetDate = localStorage.getItem('cafe_lastResetDate');
+            const savedHistory = localStorage.getItem('cafe_orderHistory');
             
-            // Check if it's a new day
             const today = new Date().toDateString();
+            
+            // Sipariş geçmişini yükle
+            if (savedHistory) {
+                orderHistory = JSON.parse(savedHistory);
+            }
+            
+            // Yeni gün kontrolü
             if (lastResetDate !== today) {
+                if (lastResetDate) {
+                    const yesterday = new Date(lastResetDate);
+                    const todayDate = new Date();
+                    const diffTime = Math.abs(todayDate - yesterday);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays > 1) {
+                        // Birden fazla gün geçmişse haftalık ciroyu da güncelle
+                        dailyRevenue = 0;
+                    }
+                }
                 dailyRevenue = 0;
                 orders = {};
             } else {
@@ -705,38 +1086,58 @@
                 orders = savedOrders ? JSON.parse(savedOrders) : {};
             }
             
-            // Default tables if none exist
+            // Masaları yükle
             if (savedTables) {
                 tables = JSON.parse(savedTables);
             } else {
                 tables = [
-                    { id: 1, name: 'Kasa Önü' },
-                    { id: 2, name: 'Cam' },
-                    { id: 3, name: 'Cam 2' }
+                    { id: 1, name: 'Masa 1' },
+                    { id: 2, name: 'Masa 2' },
+                    { id: 3, name: 'Masa 3' },
+                    { id: 4, name: 'Kasa Önü' },
+                    { id: 5, name: 'Cam' },
+                    { id: 6, name: 'Cam 2' }
                 ];
-                // Add remaining tables up to 19
-                for (let i = 4; i <= 19; i++) {
+                for (let i = 7; i <= 19; i++) {
                     tables.push({ id: i, name: `Masa ${i}` });
                 }
             }
             
-            // Default products if none exist
+            // Ürünleri yükle
             if (savedProducts) {
                 products = JSON.parse(savedProducts);
+                // Yeni varsayılan ürünleri kontrol et ve ekle
+                defaultProducts.forEach(defaultProd => {
+                    const exists = products.find(p => p.name.toLowerCase() === defaultProd.name.toLowerCase());
+                    if (!exists) {
+                        const maxId = Math.max(...products.map(p => p.id), 0);
+                        products.push({ ...defaultProd, id: maxId + 1 });
+                    } else {
+                        // Fiyat güncellemesi varsa uygula
+                        exists.price = defaultProd.price;
+                    }
+                });
             } else {
-                products = [
-                    { id: 1, name: 'Türk Kahvesi', price: 35 },
-                    { id: 2, name: 'Çay', price: 15 },
-                    { id: 3, name: 'Espresso', price: 30 },
-                    { id: 4, name: 'Latte', price: 40 },
-                    { id: 5, name: 'Cappuccino', price: 38 },
-                    { id: 6, name: 'Americano', price: 32 },
-                    { id: 7, name: 'Mocha', price: 42 },
-                    { id: 8, name: 'Filtre Kahve', price: 28 },
-                    { id: 9, name: 'Sıcak Çikolata', price: 35 },
-                    { id: 10, name: 'Salep', price: 30 }
-                ];
+                products = [...defaultProducts];
             }
+            
+            saveData();
+        }
+
+        // Haftalık ciro hesaplama
+        function calculateWeeklyRevenue() {
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            
+            return orderHistory
+                .filter(order => new Date(order.date) >= oneWeekAgo)
+                .reduce((sum, order) => sum + order.total, 0);
+        }
+
+        // Gelir göstergelerini güncelle
+        function updateRevenueDisplays() {
+            document.getElementById('dailyRevenue').textContent = dailyRevenue.toFixed(2) + ' ₺';
+            document.getElementById('weeklyRevenue').textContent = calculateWeeklyRevenue().toFixed(2) + ' ₺';
         }
 
         // Table Functions
@@ -776,7 +1177,7 @@
             }
         }
 
-        // Product Functions with Drag & Drop
+        // Touch-Optimized Drag & Drop
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
@@ -784,7 +1185,6 @@
             products.forEach((product, index) => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
-                card.draggable = true;
                 card.dataset.index = index;
                 card.innerHTML = `
                     <h3>${product.name}</h3>
@@ -792,65 +1192,118 @@
                     <button class="add-btn" onclick="addToOrder(${product.id})">Ekle</button>
                 `;
                 
-                // Drag events
-                card.addEventListener('dragstart', handleDragStart);
-                card.addEventListener('dragend', handleDragEnd);
-                card.addEventListener('dragover', handleDragOver);
-                card.addEventListener('drop', handleDrop);
-                card.addEventListener('dragenter', handleDragEnter);
-                card.addEventListener('dragleave', handleDragLeave);
+                // Touch events for tablet
+                let touchStartTime;
+                let isDragging = false;
+                let longPressTimer;
+                
+                card.addEventListener('touchstart', (e) => {
+                    touchStartTime = new Date().getTime();
+                    const touch = e.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    
+                    longPressTimer = setTimeout(() => {
+                        isDragging = true;
+                        card.classList.add('dragging');
+                        showDragHint();
+                    }, 500);
+                }, {passive: false});
+                
+                card.addEventListener('touchmove', (e) => {
+                    if (!isDragging) {
+                        clearTimeout(longPressTimer);
+                        return;
+                    }
+                    e.preventDefault();
+                    
+                    const touch = e.touches[0];
+                    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const targetCard = elementBelow?.closest('.product-card');
+                    
+                    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('drag-over'));
+                    if (targetCard && targetCard !== card) {
+                        targetCard.classList.add('drag-over');
+                    }
+                }, {passive: false});
+                
+                card.addEventListener('touchend', (e) => {
+                    clearTimeout(longPressTimer);
+                    const touchDuration = new Date().getTime() - touchStartTime;
+                    
+                    if (isDragging) {
+                        const touch = e.changedTouches[0];
+                        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                        const targetCard = elementBelow?.closest('.product-card');
+                        
+                        if (targetCard && targetCard !== card) {
+                            const targetIndex = parseInt(targetCard.dataset.index);
+                            swapProducts(index, targetIndex);
+                        }
+                        
+                        card.classList.remove('dragging');
+                        document.querySelectorAll('.product-card').forEach(c => c.classList.remove('drag-over'));
+                        hideDragHint();
+                        isDragging = false;
+                    } else if (touchDuration < 500) {
+                        // Normal click
+                        addToOrder(product.id);
+                    }
+                });
+                
+                // Mouse events for desktop
+                card.draggable = true;
+                card.addEventListener('dragstart', (e) => {
+                    draggedProduct = index;
+                    card.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('drag-over'));
+                });
+                
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                });
+                
+                card.addEventListener('dragenter', (e) => {
+                    e.preventDefault();
+                    card.classList.add('drag-over');
+                });
+                
+                card.addEventListener('dragleave', () => {
+                    card.classList.remove('drag-over');
+                });
+                
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    if (draggedProduct !== null && draggedProduct !== index) {
+                        swapProducts(draggedProduct, index);
+                    }
+                });
                 
                 grid.appendChild(card);
             });
         }
 
-        function handleDragStart(e) {
-            draggedProduct = parseInt(e.target.dataset.index);
-            e.target.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
+        function showDragHint() {
+            document.getElementById('dragHint').classList.add('show');
         }
 
-        function handleDragEnd(e) {
-            e.target.classList.remove('dragging');
-            document.querySelectorAll('.product-card').forEach(card => {
-                card.classList.remove('drag-over');
-            });
+        function hideDragHint() {
+            document.getElementById('dragHint').classList.remove('show');
         }
 
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-
-        function handleDragEnter(e) {
-            e.preventDefault();
-            if (e.target.classList.contains('product-card')) {
-                e.target.classList.add('drag-over');
-            }
-        }
-
-        function handleDragLeave(e) {
-            if (e.target.classList.contains('product-card')) {
-                e.target.classList.remove('drag-over');
-            }
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const targetCard = e.target.closest('.product-card');
-            if (!targetCard) return;
-            
-            targetCard.classList.remove('drag-over');
-            const targetIndex = parseInt(targetCard.dataset.index);
-            
-            if (draggedProduct !== null && draggedProduct !== targetIndex) {
-                // Swap products
-                const temp = products[draggedProduct];
-                products[draggedProduct] = products[targetIndex];
-                products[targetIndex] = temp;
-                saveData();
-                renderProducts();
-            }
+        function swapProducts(fromIndex, toIndex) {
+            const temp = products[fromIndex];
+            products[fromIndex] = products[toIndex];
+            products[toIndex] = temp;
+            saveData();
+            renderProducts();
         }
 
         // Order Functions
@@ -910,8 +1363,8 @@
                         <span>${item.price.toFixed(2)} ₺ x ${item.quantity} = ${itemTotal.toFixed(2)} ₺</span>
                     </div>
                     <div class="order-item-actions">
-                        <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
-                        <span>${item.quantity}</span>
+                        <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">−</button>
+                        <span style="font-size: 18px; font-weight: bold;">${item.quantity}</span>
                         <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
                         <button class="remove-item" onclick="removeItem(${index})">×</button>
                     </div>
@@ -949,18 +1402,111 @@
             }
             
             const total = orders[currentTable].reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const orderItems = [...orders[currentTable]];
+            const tableName = tables.find(t => t.id === currentTable).name;
+            
+            // Sipariş geçmişine ekle
+            const orderRecord = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                tableName: tableName,
+                items: orderItems,
+                total: total,
+                formattedDate: new Date().toLocaleString('tr-TR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+            
+            orderHistory.unshift(orderRecord);
             dailyRevenue += total;
             
-            // Clear table orders
+            // Masayı temizle
             orders[currentTable] = [];
             saveData();
             
-            updateDailyRevenueDisplay();
+            updateRevenueDisplays();
             renderOrder();
             renderTables();
             
-            // Receipt animation
-            alert(`Hesap kapatıldı!\nToplam: ${total.toFixed(2)} ₺\nTeşekkürler!`);
+            alert(`✅ Hesap kapatıldı!\n\nMasa: ${tableName}\nToplam: ${total.toFixed(2)} ₺\n\nTarih: ${orderRecord.formattedDate}`);
+        }
+
+        // Reports Modal
+        function openReportsModal() {
+            document.getElementById('reportsModal').classList.add('active');
+            updateReports();
+        }
+
+        function closeReportsModal() {
+            document.getElementById('reportsModal').classList.remove('active');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.report-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Report').classList.add('active');
+            
+            updateReports();
+        }
+
+        function updateReports() {
+            const today = new Date().toDateString();
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            
+            // Günlük rapor
+            const dailyOrders = orderHistory.filter(order => 
+                new Date(order.date).toDateString() === today
+            );
+            const dailyTotal = dailyOrders.reduce((sum, order) => sum + order.total, 0);
+            
+            document.getElementById('reportDailyTotal').textContent = dailyTotal.toFixed(2) + ' ₺';
+            document.getElementById('reportDailyCount').textContent = dailyOrders.length;
+            renderOrdersList(dailyOrders, 'dailyOrdersList');
+            
+            // Haftalık rapor
+            const weeklyOrders = orderHistory.filter(order => 
+                new Date(order.date) >= oneWeekAgo
+            );
+            const weeklyTotal = weeklyOrders.reduce((sum, order) => sum + order.total, 0);
+            
+            document.getElementById('reportWeeklyTotal').textContent = weeklyTotal.toFixed(2) + ' ₺';
+            document.getElementById('reportWeeklyCount').textContent = weeklyOrders.length;
+            renderOrdersList(weeklyOrders, 'weeklyOrdersList');
+            
+            // Tüm rapor
+            const allTotal = orderHistory.reduce((sum, order) => sum + order.total, 0);
+            document.getElementById('reportAllTotal').textContent = allTotal.toFixed(2) + ' ₺';
+            document.getElementById('reportAllCount').textContent = orderHistory.length;
+            renderOrdersList(orderHistory, 'allOrdersList');
+        }
+
+        function renderOrdersList(orders, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="no-data">Kayıt bulunmamaktadır</div>';
+                return;
+            }
+            
+            container.innerHTML = orders.map(order => `
+                <div class="order-record">
+                    <div class="order-record-header">
+                        <h4>${order.tableName}</h4>
+                        <span class="date">${order.formattedDate}</span>
+                    </div>
+                    <div class="order-record-items">
+                        ${order.items.map(item => `${item.name} (${item.quantity}x)`).join(', ')}
+                    </div>
+                    <div class="order-record-total">${order.total.toFixed(2)} ₺</div>
+                </div>
+            `).join('');
         }
 
         // Product Management
@@ -1054,16 +1600,11 @@
             }
         }
 
-        // Daily Revenue
-        function updateDailyRevenueDisplay() {
-            document.getElementById('dailyRevenue').textContent = dailyRevenue.toFixed(2) + ' ₺';
-        }
-
         function resetDailyRevenue() {
             if (confirm('Günlük ciroyu sıfırlamak istediğinize emin misiniz?')) {
                 dailyRevenue = 0;
                 saveData();
-                updateDailyRevenueDisplay();
+                updateRevenueDisplays();
             }
         }
 
