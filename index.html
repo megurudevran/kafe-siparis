@@ -1,1539 +1,247 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kafe Pro - Tablet Yönetim Sistemi</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
-            height: 100vh;
-            overflow: hidden;
-            user-select: none;
-        }
-
-        .container {
-            display: flex;
-            height: 100vh;
-        }
-
-        /* Sidebar - Masalar (Tablet için optimize) */
-        .sidebar {
-            width: 140px;
-            background: rgba(0,0,0,0.4);
-            padding: 10px;
-            overflow-y: auto;
-            border-right: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar h2 {
-            font-size: 14px;
-            margin-bottom: 10px;
-            color: #e94560;
-            text-align: center;
-            padding-bottom: 8px;
-            border-bottom: 2px solid rgba(233, 69, 96, 0.3);
-        }
-
-        .table-btn {
-            width: 100%;
-            padding: 10px 8px;
-            margin-bottom: 6px;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-            font-weight: 500;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        .table-btn:active {
-            transform: scale(0.95);
-        }
-
-        .table-btn.active {
-            background: linear-gradient(135deg, #e94560, #ff6b6b);
-            box-shadow: 0 0 10px rgba(233, 69, 96, 0.4);
-        }
-
-        .table-btn.has-order::after {
-            content: '●';
-            position: absolute;
-            right: 6px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #ffd700;
-            font-size: 10px;
-        }
-
-        .add-table-btn {
-            width: 100%;
-            padding: 10px;
-            margin-top: auto;
-            border: 1px dashed rgba(255,255,255,0.3);
-            border-radius: 8px;
-            background: transparent;
-            color: #fff;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            min-width: 0;
-        }
-
-        .header {
-            background: rgba(0,0,0,0.3);
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            gap: 10px;
-        }
-
-        .header h1 {
-            font-size: 18px;
-            color: #fff;
-            margin: 0;
-            white-space: nowrap;
-        }
-
-        .stats-container {
-            display: flex;
-            gap: 8px;
-        }
-
-        .stat-box {
-            background: rgba(233, 69, 96, 0.15);
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(233, 69, 96, 0.3);
-            text-align: center;
-            min-width: 100px;
-        }
-
-        .stat-box label {
-            display: block;
-            font-size: 10px;
-            color: #aaa;
-            margin-bottom: 2px;
-            text-transform: uppercase;
-        }
-
-        .stat-box span {
-            color: #e94560;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        /* Content Area */
-        .content {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-
-        /* Products Section */
-        .products-section {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            min-width: 0;
-        }
-
-        .section-title {
-            font-size: 16px;
-            margin-bottom: 12px;
-            color: #e94560;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            padding-bottom: 60px;
-        }
-
-        .product-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            transition: all 0.2s;
-            position: relative;
-            border: 1px solid transparent;
-            min-height: 90px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .product-card:active {
-            transform: scale(0.95);
-        }
-
-        .product-card.dragging {
-            opacity: 0.6;
-            border: 1px dashed #e94560;
-            z-index: 1000;
-        }
-
-        .product-card.drag-over {
-            border: 1px solid #e94560;
-            background: rgba(233, 69, 96, 0.1);
-        }
-
-        .product-card h3 {
-            font-size: 12px;
-            margin-bottom: 5px;
-            color: #fff;
-            line-height: 1.2;
-            font-weight: 500;
-        }
-
-        .product-card .price {
-            color: #e94560;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .product-card .add-btn {
-            width: 100%;
-            padding: 6px;
-            border: none;
-            border-radius: 6px;
-            background: linear-gradient(135deg, #e94560, #ff6b6b);
-            color: #fff;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* Order Section - HER ZAMAN AÇIK */
-        .order-section {
-            width: 280px;
-            background: rgba(0,0,0,0.3);
-            border-left: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
-
-        .order-header {
-            padding: 12px;
-            background: linear-gradient(135deg, rgba(233, 69, 96, 0.3), rgba(233, 69, 96, 0.1));
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .order-header h2 {
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .order-header p {
-            color: #aaa;
-            font-size: 12px;
-        }
-
-        .order-items {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            background: rgba(255,255,255,0.05);
-            margin-bottom: 6px;
-            border-radius: 8px;
-            animation: slideIn 0.2s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .order-item-info h4 {
-            font-size: 13px;
-            margin-bottom: 2px;
-            font-weight: 500;
-        }
-
-        .order-item-info span {
-            color: #e94560;
-            font-size: 12px;
-        }
-
-        .order-item-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .quantity-btn {
-            width: 26px;
-            height: 26px;
-            border: none;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            color: #fff;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .quantity-btn:active {
-            background: #e94560;
-        }
-
-        .remove-item {
-            background: #ff4444;
-            border: none;
-            color: #fff;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .order-footer {
-            padding: 12px;
-            background: rgba(0,0,0,0.4);
-            border-top: 2px solid rgba(233, 69, 96, 0.3);
-        }
-
-        .total-amount {
-            display: flex;
-            justify-content: space-between;
-            font-size: 18px;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .total-amount span:last-child {
-            color: #e94560;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #e94560, #ff6b6b);
-            color: #fff;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        .checkout-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Management Buttons - KÜÇÜLTÜLMÜŞ */
-        .management-btns {
-            position: fixed;
-            bottom: 10px;
-            left: 150px;
-            display: flex;
-            gap: 8px;
-            z-index: 100;
-        }
-
-        .mgmt-btn {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #e94560, #ff6b6b);
-            color: #fff;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-            white-space: nowrap;
-        }
-
-        .mgmt-btn:active {
-            transform: scale(0.95);
-        }
-
-        .reports-btn {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-        }
-
-        .reset-day-btn {
-            background: linear-gradient(135deg, #FF9800, #F57C00);
-            color: #000;
-        }
-
-        /* Modals */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
-            border-radius: 16px;
-            padding: 20px;
-            width: 95%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid rgba(233, 69, 96, 0.3);
-        }
-
-        .modal-header h2 {
-            color: #e94560;
-            font-size: 20px;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 28px;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        /* Reports Styles */
-        .reports-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            background: rgba(255,255,255,0.05);
-            padding: 6px;
-            border-radius: 8px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            background: transparent;
-            color: #aaa;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .tab-btn.active {
-            background: #e94560;
-            color: #fff;
-        }
-
-        .report-content {
-            display: none;
-        }
-
-        .report-content.active {
-            display: block;
-        }
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .summary-card {
-            background: rgba(255,255,255,0.05);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .summary-card h3 {
-            font-size: 11px;
-            color: #aaa;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .summary-card .amount {
-            font-size: 20px;
-            color: #e94560;
-            font-weight: bold;
-        }
-
-        .orders-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .order-record {
-            background: rgba(255,255,255,0.05);
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            border-left: 3px solid #e94560;
-            position: relative;
-            padding-right: 40px;
-        }
-
-        .order-record-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-            align-items: center;
-        }
-
-        .order-record h4 {
-            color: #fff;
-            font-size: 14px;
-        }
-
-        .order-record .date {
-            color: #aaa;
-            font-size: 11px;
-        }
-
-        .order-record-items {
-            font-size: 12px;
-            color: #ccc;
-            margin-bottom: 4px;
-            line-height: 1.4;
-        }
-
-        .order-record-total {
-            text-align: right;
-            color: #e94560;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .delete-order-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: #ff4444;
-            border: none;
-            color: #fff;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .clear-all-btn {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 12px;
-            border: 1px solid #ff4444;
-            border-radius: 6px;
-            background: rgba(255, 68, 68, 0.1);
-            color: #ff4444;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        /* Form Elements */
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #aaa;
-            font-size: 13px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 6px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            font-size: 14px;
-        }
-
-        .btn-primary, .btn-secondary {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            margin-bottom: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #e94560, #ff6b6b);
-            color: #fff;
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .product-list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: rgba(255,255,255,0.05);
-            margin-bottom: 8px;
-            border-radius: 6px;
-        }
-
-        .product-list-item h4 {
-            font-size: 14px;
-        }
-
-        .product-list-item span {
-            color: #e94560;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .product-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .icon-btn {
-            width: 32px;
-            height: 32px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .edit-btn {
-            background: #4CAF50;
-            color: #fff;
-        }
-
-        .delete-btn {
-            background: #f44336;
-            color: #fff;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 30px;
-            color: rgba(255,255,255,0.4);
-        }
-
-        .empty-state h3 {
-            font-size: 16px;
-            margin-bottom: 8px;
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #e94560;
-            border-radius: 3px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kafe Pro</title>
+<style>
+body{margin:0;font-family:Segoe UI;background:#111;color:#fff}
+.container{display:flex;height:100vh}
+.sidebar{width:200px;background:#1b1b1b;padding:10px;overflow:auto}
+.table-btn{width:100%;padding:12px;margin-bottom:8px;background:#333;border:none;color:#fff;border-radius:8px;cursor:pointer}
+.table-btn.active{background:#e94560}
+.main{flex:1;display:flex;flex-direction:column}
+.header{padding:15px;background:#1a1a2e;display:flex;justify-content:space-between}
+.content{flex:1;display:flex}
+.products{flex:1;padding:15px;overflow:auto}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.product{background:#222;padding:10px;border-radius:10px;text-align:center}
+.product button{width:100%;margin-top:5px;background:#e94560;border:none;padding:6px;color:#fff;border-radius:6px}
+.order{width:350px;background:#1b1b1b;padding:15px;display:flex;flex-direction:column}
+.order-items{flex:1;overflow:auto}
+.order-item{background:#222;padding:8px;margin-bottom:8px;border-radius:8px}
+.total{font-size:20px;margin-top:10px}
+button{cursor:pointer}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);justify-content:center;align-items:center}
+.modal-content{background:#1a1a2e;padding:20px;border-radius:15px;width:600px;max-height:80vh;overflow:auto}
+.close{float:right;background:red;border:none;color:#fff;border-radius:50%;width:30px;height:30px}
+.order-record{background:#222;padding:10px;margin-bottom:10px;border-radius:10px}
+.delete-order-btn{float:right;background:red;border:none;color:#fff;border-radius:50%;width:25px;height:25px}
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Sidebar - Masalar -->
-        <div class="sidebar">
-            <h2>🪑 Masalar</h2>
-            <div id="tablesList" style="flex: 1; overflow-y: auto;"></div>
-            <button class="add-table-btn" onclick="addNewTable()">+ Masa Ekle</button>
-        </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="header">
-                <h1 id="currentTableName">Masa Seçin</h1>
-                <div class="stats-container">
-                    <div class="stat-box">
-                        <label>Bugün</label>
-                        <span id="dailyRevenue">0 ₺</span>
-                    </div>
-                    <div class="stat-box">
-                        <label>Hafta</label>
-                        <span id="weeklyRevenue">0 ₺</span>
-                    </div>
-                </div>
-            </div>
+<div class="container">
 
-            <div class="content">
-                <!-- Products Section -->
-                <div class="products-section">
-                    <div class="section-title">
-                        <span>Ürünler</span>
-                        <small style="font-size: 11px; color: #aaa;">(Sürükle)</small>
-                    </div>
-                    <div class="products-grid" id="productsGrid"></div>
-                </div>
+<div class="sidebar">
+<h3>Masalar</h3>
+<div id="tables"></div>
+<button onclick="addTable()">+ Masa</button>
+</div>
 
-                <!-- Order Section - HER ZAMAN GÖRÜNÜR -->
-                <div class="order-section">
-                    <div class="order-header">
-                        <h2>Sipariş</h2>
-                        <p>Masa: <span id="selectedTableDisplay">-</span></p>
-                    </div>
-                    <div class="order-items" id="orderItems">
-                        <div class="empty-state">
-                            <h3>Sipariş Yok</h3>
-                            <p style="font-size: 12px;">Ürün seçin</p>
-                        </div>
-                    </div>
-                    <div class="order-footer">
-                        <div class="total-amount">
-                            <span>Toplam:</span>
-                            <span id="totalAmount">0 ₺</span>
-                        </div>
-                        <button class="checkout-btn" onclick="checkout()">Hesabı Kapat</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="main">
 
-    <!-- Management Buttons -->
-    <div class="management-btns">
-        <button class="mgmt-btn" onclick="openProductModal()">Ürünler</button>
-        <button class="mgmt-btn reports-btn" onclick="openReportsModal()">Raporlar</button>
-        <button class="mgmt-btn reset-day-btn" onclick="resetDailyRevenue()">Sıfırla</button>
-    </div>
+<div class="header">
+<div id="currentTable">Masa seç</div>
+<div>
+Günlük: <span id="dailyRevenue">0 ₺</span> |
+Haftalık: <span id="weeklyRevenue">0 ₺</span>
+</div>
+</div>
 
-    <!-- Product Management Modal -->
-    <div class="modal" id="productModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Ürün Yönetimi</h2>
-                <button class="close-btn" onclick="closeProductModal()">&times;</button>
-            </div>
-            
-            <div class="form-group">
-                <label>Ürün Adı</label>
-                <input type="text" id="newProductName" placeholder="Ürün adı">
-            </div>
-            <div class="form-group">
-                <label>Fiyat (₺)</label>
-                <input type="number" id="newProductPrice" placeholder="0.00" step="0.01">
-            </div>
-            <button class="btn-primary" onclick="addProduct()">Ekle</button>
-            
-            <hr style="margin: 15px 0; border-color: rgba(255,255,255,0.1);">
-            
-            <h3 style="margin-bottom: 10px; color: #e94560; font-size: 14px;">Mevcut Ürünler</h3>
-            <div id="productList"></div>
-        </div>
-    </div>
+<div class="content">
 
-    <!-- Reports Modal -->
-    <div class="modal" id="reportsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Raporlar</h2>
-                <button class="close-btn" onclick="closeReportsModal()">&times;</button>
-            </div>
-            
-            <div class="reports-tabs">
-                <button class="tab-btn active" onclick="switchTab('daily')">Günlük</button>
-                <button class="tab-btn" onclick="switchTab('weekly')">Haftalık</button>
-                <button class="tab-btn" onclick="switchTab('all')">Tümü</button>
-            </div>
+<div class="products">
+<h3>Ürünler</h3>
+<div class="products-grid" id="products"></div>
+<button onclick="openReports()">Raporlar</button>
+</div>
 
-            <div id="dailyReport" class="report-content active">
-                <button class="clear-all-btn" onclick="clearDailyOrders()">🗑️ Bugünü Temizle</button>
-                <div class="summary-cards">
-                    <div class="summary-card">
-                        <h3>Toplam</h3>
-                        <div class="amount" id="reportDailyTotal">0 ₺</div>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Adet</h3>
-                        <div class="amount" id="reportDailyCount">0</div>
-                    </div>
-                </div>
-                <div class="orders-list" id="dailyOrdersList"></div>
-            </div>
+<div class="order">
+<h3>Sipariş</h3>
+<div class="order-items" id="orderItems"></div>
+<div class="total">Toplam: <span id="total">0 ₺</span></div>
+<button onclick="checkout()">Hesabı Kapat</button>
+</div>
 
-            <div id="weeklyReport" class="report-content">
-                <button class="clear-all-btn" onclick="clearWeeklyOrders()">🗑️ Haftayı Temizle</button>
-                <div class="summary-cards">
-                    <div class="summary-card">
-                        <h3>Toplam</h3>
-                        <div class="amount" id="reportWeeklyTotal">0 ₺</div>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Adet</h3>
-                        <div class="amount" id="reportWeeklyCount">0</div>
-                    </div>
-                </div>
-                <div class="orders-list" id="weeklyOrdersList"></div>
-            </div>
+</div>
+</div>
+</div>
 
-            <div id="allReport" class="report-content">
-                <button class="clear-all-btn" onclick="clearAllOrders()">🗑️ Tümünü Temizle</button>
-                <div class="summary-cards">
-                    <div class="summary-card">
-                        <h3>Toplam</h3>
-                        <div class="amount" id="reportAllTotal">0 ₺</div>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Adet</h3>
-                        <div class="amount" id="reportAllCount">0</div>
-                    </div>
-                </div>
-                <div class="orders-list" id="allOrdersList"></div>
-            </div>
-        </div>
-    </div>
+<div class="modal" id="reportsModal">
+<div class="modal-content">
+<button class="close" onclick="closeReports()">X</button>
+<h3>Satış Raporu</h3>
+<div id="reportContent"></div>
+<button onclick="clearAllOrders()">Tüm Geçmişi Sil</button>
+</div>
+</div>
 
-    <!-- Edit Product Modal -->
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Düzenle</h2>
-                <button class="close-btn" onclick="closeEditModal()">&times;</button>
-            </div>
-            <input type="hidden" id="editProductId">
-            <div class="form-group">
-                <label>Ürün Adı</label>
-                <input type="text" id="editProductName">
-            </div>
-            <div class="form-group">
-                <label>Fiyat (₺)</label>
-                <input type="number" id="editProductPrice" step="0.01">
-            </div>
-            <button class="btn-primary" onclick="saveEditProduct()">Kaydet</button>
-            <button class="btn-secondary" onclick="closeEditModal()">İptal</button>
-        </div>
-    </div>
+<script>
 
-    <script>
-        // Data Management
-        let tables = [];
-        let products = [];
-        let orders = {};
-        let dailyRevenue = 0;
-        let currentTable = null;
-        let draggedProduct = null;
-        let orderHistory = [];
+let tables = JSON.parse(localStorage.getItem("tables")) || [
+{id:1,name:"Masa 1"},
+{id:2,name:"Masa 2"}
+];
 
-        const defaultProducts = [
-            { id: 1, name: 'Çay', price: 20 },
-            { id: 2, name: 'Oralet', price: 20 },
-            { id: 3, name: 'Soğuk İç.', price: 70 },
-            { id: 4, name: 'Sade Soda', price: 25 },
-            { id: 5, name: 'Meyv. Soda', price: 30 },
-            { id: 6, name: 'Tost', price: 170 },
-            { id: 7, name: 'Yar. Tost', price: 85 },
-            { id: 8, name: 'Fınd. İç.', price: 110 },
-            { id: 9, name: 'Ayran', price: 30 },
-            { id: 10, name: 'Kuşburnu', price: 80 },
-            { id: 11, name: 'Nescafe', price: 60 },
-            { id: 12, name: 'Sütlü', price: 80 },
-            { id: 13, name: 'Sütlaç', price: 110 },
-            { id: 14, name: 'Fındık Tab.', price: 70 },
-            { id: 15, name: 'Churchill', price: 60 },
-            { id: 16, name: 'Kek', price: 20 },
-            { id: 17, name: 'Çikolata', price: 30 },
-            { id: 18, name: 'Cips', price: 35 },
-            { id: 19, name: 'Sahlep', price: 90 },
-            { id: 20, name: 'Redbull', price: 90 },
-            { id: 21, name: 'Bisküvi', price: 35 }
-        ];
+let products = [
+{id:1,name:"Çay",price:20},
+{id:2,name:"Tost",price:170},
+{id:3,name:"Kola",price:50}
+];
 
-        window.onload = function() {
-            loadData();
-            renderTables();
-            renderProducts();
-            updateRevenueDisplays();
-            
-            if (tables.length > 0 && !currentTable) {
-                selectTable(tables[0].id);
-            }
-        };
+let orders = JSON.parse(localStorage.getItem("orders")) || {};
+let orderHistory = JSON.parse(localStorage.getItem("history")) || [];
+let dailyRevenue = parseFloat(localStorage.getItem("dailyRevenue")) || 0;
+let currentTable = null;
 
-        function saveData() {
-            localStorage.setItem('cafe_tables', JSON.stringify(tables));
-            localStorage.setItem('cafe_products', JSON.stringify(products));
-            localStorage.setItem('cafe_orders', JSON.stringify(orders));
-            localStorage.setItem('cafe_dailyRevenue', dailyRevenue);
-            localStorage.setItem('cafe_lastResetDate', new Date().toDateString());
-            localStorage.setItem('cafe_orderHistory', JSON.stringify(orderHistory));
-        }
+function save(){
+localStorage.setItem("tables",JSON.stringify(tables));
+localStorage.setItem("orders",JSON.stringify(orders));
+localStorage.setItem("history",JSON.stringify(orderHistory));
+localStorage.setItem("dailyRevenue",dailyRevenue);
+}
 
-        function loadData() {
-            const savedTables = localStorage.getItem('cafe_tables');
-            const savedProducts = localStorage.getItem('cafe_products');
-            const savedOrders = localStorage.getItem('cafe_orders');
-            const savedRevenue = localStorage.getItem('cafe_dailyRevenue');
-            const lastResetDate = localStorage.getItem('cafe_lastResetDate');
-            const savedHistory = localStorage.getItem('cafe_orderHistory');
-            
-            const today = new Date().toDateString();
-            
-            if (savedHistory) orderHistory = JSON.parse(savedHistory);
-            
-            if (lastResetDate !== today) {
-                dailyRevenue = 0;
-                orders = {};
-            } else {
-                dailyRevenue = savedRevenue ? parseFloat(savedRevenue) : 0;
-                orders = savedOrders ? JSON.parse(savedOrders) : {};
-            }
-            
-            if (savedTables) {
-                tables = JSON.parse(savedTables);
-            } else {
-                tables = [
-                    { id: 1, name: 'Masa 1' },
-                    { id: 2, name: 'Masa 2' },
-                    { id: 3, name: 'Masa 3' },
-                    { id: 4, name: 'Kasa Önü' },
-                    { id: 5, name: 'Cam' },
-                    { id: 6, name: 'Cam 2' }
-                ];
-                for (let i = 7; i <= 19; i++) {
-                    tables.push({ id: i, name: `Masa ${i}` });
-                }
-            }
-            
-            if (savedProducts) {
-                products = JSON.parse(savedProducts);
-                defaultProducts.forEach(defaultProd => {
-                    const exists = products.find(p => p.name.toLowerCase() === defaultProd.name.toLowerCase());
-                    if (!exists) {
-                        const maxId = Math.max(...products.map(p => p.id), 0);
-                        products.push({ ...defaultProd, id: maxId + 1 });
-                    } else {
-                        exists.price = defaultProd.price;
-                    }
-                });
-            } else {
-                products = [...defaultProducts];
-            }
-            
-            saveData();
-        }
+function renderTables(){
+let div=document.getElementById("tables");
+div.innerHTML="";
+tables.forEach(t=>{
+let btn=document.createElement("button");
+btn.className="table-btn"+(currentTable===t.id?" active":"");
+btn.innerText=t.name;
+btn.onclick=()=>selectTable(t.id);
+div.appendChild(btn);
+});
+}
 
-        function calculateWeeklyRevenue() {
-            const oneWeekAgo = new Date();
-            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-            
-            return orderHistory
-                .filter(order => new Date(order.date) >= oneWeekAgo)
-                .reduce((sum, order) => sum + order.total, 0);
-        }
+function selectTable(id){
+currentTable=id;
+document.getElementById("currentTable").innerText=tables.find(t=>t.id===id).name;
+renderTables();
+renderOrder();
+}
 
-        function updateRevenueDisplays() {
-            document.getElementById('dailyRevenue').textContent = dailyRevenue.toFixed(0) + ' ₺';
-            document.getElementById('weeklyRevenue').textContent = calculateWeeklyRevenue().toFixed(0) + ' ₺';
-        }
+function addTable(){
+let name=prompt("Masa adı");
+if(!name)return;
+tables.push({id:Date.now(),name});
+save();
+renderTables();
+}
 
-        function renderTables() {
-            const container = document.getElementById('tablesList');
-            container.innerHTML = '';
-            
-            tables.forEach(table => {
-                const btn = document.createElement('button');
-                btn.className = 'table-btn';
-                if (currentTable === table.id) btn.classList.add('active');
-                if (orders[table.id] && orders[table.id].length > 0) btn.classList.add('has-order');
-                btn.textContent = table.name;
-                btn.onclick = () => selectTable(table.id);
-                container.appendChild(btn);
-            });
-        }
+function renderProducts(){
+let grid=document.getElementById("products");
+grid.innerHTML="";
+products.forEach(p=>{
+let div=document.createElement("div");
+div.className="product";
+div.innerHTML=`<div>${p.name}</div><div>${p.price} ₺</div>
+<button onclick="addToOrder(${p.id})">Ekle</button>`;
+grid.appendChild(div);
+});
+}
 
-        function selectTable(tableId) {
-            currentTable = tableId;
-            const table = tables.find(t => t.id === tableId);
-            document.getElementById('currentTableName').textContent = table.name;
-            document.getElementById('selectedTableDisplay').textContent = table.name;
-            renderTables();
-            renderOrder();
-        }
+function addToOrder(pid){
+if(!currentTable){alert("Masa seç");return;}
+if(!orders[currentTable])orders[currentTable]=[];
+let existing=orders[currentTable].find(i=>i.productId===pid);
+let product=products.find(p=>p.id===pid);
+if(existing)existing.qty++;
+else orders[currentTable].push({productId:pid,name:product.name,price:product.price,qty:1});
+save();
+renderOrder();
+}
 
-        function addNewTable() {
-            const maxId = Math.max(...tables.map(t => t.id), 0);
-            const newId = maxId + 1;
-            const name = prompt('Masa adı:', `Masa ${newId}`);
-            if (name) {
-                tables.push({ id: newId, name: name });
-                saveData();
-                renderTables();
-                selectTable(newId);
-            }
-        }
+function renderOrder(){
+let list=document.getElementById("orderItems");
+list.innerHTML="";
+let total=0;
+(orders[currentTable]||[]).forEach((item,i)=>{
+total+=item.price*item.qty;
+list.innerHTML+=`
+<div class="order-item">
+${item.name} x${item.qty} (${item.price*item.qty} ₺)
+<button onclick="removeItem(${i})">Sil</button>
+</div>`;
+});
+document.getElementById("total").innerText=total+" ₺";
+}
 
-        function renderProducts() {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
-            
-            products.forEach((product, index) => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.dataset.index = index;
-                card.innerHTML = `
-                    <h3>${product.name}</h3>
-                    <div class="price">${product.price.toFixed(0)} ₺</div>
-                    <button class="add-btn" onclick="addToOrder(${product.id})">+</button>
-                `;
-                
-                // Touch events
-                let touchStartTime;
-                let isDragging = false;
-                let longPressTimer;
-                
-                card.addEventListener('touchstart', (e) => {
-                    touchStartTime = new Date().getTime();
-                    longPressTimer = setTimeout(() => {
-                        isDragging = true;
-                        card.classList.add('dragging');
-                    }, 400);
-                }, {passive: false});
-                
-                card.addEventListener('touchmove', (e) => {
-                    if (!isDragging) {
-                        clearTimeout(longPressTimer);
-                        return;
-                    }
-                    e.preventDefault();
-                    
-                    const touch = e.touches[0];
-                    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-                    const targetCard = elementBelow?.closest('.product-card');
-                    
-                    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('drag-over'));
-                    if (targetCard && targetCard !== card) {
-                        targetCard.classList.add('drag-over');
-                    }
-                }, {passive: false});
-                
-                card.addEventListener('touchend', (e) => {
-                    clearTimeout(longPressTimer);
-                    const touchDuration = new Date().getTime() - touchStartTime;
-                    
-                    if (isDragging) {
-                        const touch = e.changedTouches[0];
-                        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-                        const targetCard = elementBelow?.closest('.product-card');
-                        
-                        if (targetCard && targetCard !== card) {
-                            const targetIndex = parseInt(targetCard.dataset.index);
-                            swapProducts(index, targetIndex);
-                        }
-                        
-                        card.classList.remove('dragging');
-                        document.querySelectorAll('.product-card').forEach(c => c.classList.remove('drag-over'));
-                        isDragging = false;
-                    } else if (touchDuration < 400) {
-                        addToOrder(product.id);
-                    }
-                });
-                
-                // Mouse events
-                card.draggable = true;
-                card.addEventListener('dragstart', (e) => {
-                    draggedProduct = index;
-                    card.classList.add('dragging');
-                    e.dataTransfer.effectAllowed = 'move';
-                });
-                
-                card.addEventListener('dragend', () => {
-                    card.classList.remove('dragging');
-                    document.querySelectorAll('.product-card').forEach(c => c.classList.remove('drag-over'));
-                });
-                
-                card.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                });
-                
-                card.addEventListener('dragenter', (e) => {
-                    e.preventDefault();
-                    card.classList.add('drag-over');
-                });
-                
-                card.addEventListener('dragleave', () => {
-                    card.classList.remove('drag-over');
-                });
-                
-                card.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    card.classList.remove('drag-over');
-                    if (draggedProduct !== null && draggedProduct !== index) {
-                        swapProducts(draggedProduct, index);
-                    }
-                });
-                
-                grid.appendChild(card);
-            });
-        }
+function removeItem(i){
+orders[currentTable].splice(i,1);
+save();
+renderOrder();
+}
 
-        function swapProducts(fromIndex, toIndex) {
-            const temp = products[fromIndex];
-            products[fromIndex] = products[toIndex];
-            products[toIndex] = temp;
-            saveData();
-            renderProducts();
-        }
+function checkout(){
+if(!orders[currentTable]||orders[currentTable].length===0)return;
+let total=orders[currentTable].reduce((s,i)=>s+i.price*i.qty,0);
+orderHistory.unshift({
+id:Date.now(),
+date:new Date().toISOString(),
+table:tables.find(t=>t.id===currentTable).name,
+items:orders[currentTable],
+total
+});
+dailyRevenue+=total;
+orders[currentTable]=[];
+save();
+renderOrder();
+updateRevenue();
+alert("Hesap kapandı");
+}
 
-        function addToOrder(productId) {
-            if (!currentTable) {
-                alert('Masa seçin!');
-                return;
-            }
-            
-            const product = products.find(p => p.id === productId);
-            if (!orders[currentTable]) orders[currentTable] = [];
-            
-            const existingItem = orders[currentTable].find(item => item.productId === productId);
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                orders[currentTable].push({
-                    productId: productId,
-                    name: product.name,
-                    price: product.price,
-                    quantity: 1
-                });
-            }
-            
-            saveData();
-            renderOrder();
-            renderTables();
-        }
+function updateRevenue(){
+document.getElementById("dailyRevenue").innerText=dailyRevenue+" ₺";
+let week=new Date();
+week.setDate(week.getDate()-7);
+let weekly=orderHistory.filter(o=>new Date(o.date)>=week)
+.reduce((s,o)=>s+o.total,0);
+document.getElementById("weeklyRevenue").innerText=weekly+" ₺";
+}
 
-        function renderOrder() {
-            const container = document.getElementById('orderItems');
-            const tableOrders = orders[currentTable] || [];
-            
-            if (tableOrders.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>Sipariş Yok</h3>
-                        <p style="font-size: 12px;">Ürün seçin</p>
-                    </div>
-                `;
-                document.getElementById('totalAmount').textContent = '0 ₺';
-                return;
-            }
-            
-            container.innerHTML = '';
-            let total = 0;
-            
-            tableOrders.forEach((item, index) => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                const div = document.createElement('div');
-                div.className = 'order-item';
-                div.innerHTML = `
-                    <div class="order-item-info">
-                        <h4>${item.name}</h4>
-                        <span>${item.price.toFixed(0)}₺ x ${item.quantity}</span>
-                    </div>
-                    <div class="order-item-actions">
-                        <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">−</button>
-                        <span style="font-size: 13px;">${item.quantity}</span>
-                        <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
-                        <button class="remove-item" onclick="removeItem(${index})">×</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-            
-            document.getElementById('totalAmount').textContent = total.toFixed(0) + ' ₺';
-        }
+function openReports(){
+document.getElementById("reportsModal").style.display="flex";
+renderReports();
+}
 
-        function updateQuantity(index, change) {
-            const item = orders[currentTable][index];
-            item.quantity += change;
-            
-            if (item.quantity <= 0) {
-                orders[currentTable].splice(index, 1);
-            }
-            
-            saveData();
-            renderOrder();
-            renderTables();
-        }
+function closeReports(){
+document.getElementById("reportsModal").style.display="none";
+}
 
-        function removeItem(index) {
-            orders[currentTable].splice(index, 1);
-            saveData();
-            renderOrder();
-            renderTables();
-        }
+function renderReports(){
+let div=document.getElementById("reportContent");
+if(orderHistory.length===0){div.innerHTML="Kayıt yok";return;}
+div.innerHTML=orderHistory.map(o=>`
+<div class="order-record">
+<button class="delete-order-btn" onclick="deleteSingleOrder(${o.id})">X</button>
+<b>${o.table}</b><br>
+${o.items.map(i=>i.name+" x"+i.qty).join("<br>")}
+<br><b>${o.total} ₺</b>
+</div>
+`).join("");
+}
 
-        function checkout() {
-            if (!orders[currentTable] || orders[currentTable].length === 0) {
-                alert('Sipariş yok!');
-                return;
-            }
-            
-            const total = orders[currentTable].reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const orderItems = [...orders[currentTable]];
-            const tableName = tables.find(t => t.id === currentTable).name;
-            
-            const orderRecord = {
-                id: Date.now(),
-                date: new Date().toISOString(),
-                tableName: tableName,
-                items: orderItems,
-                total: total,
-                formattedDate: new Date().toLocaleString('tr-TR', {
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
-            };
-            
-            orderHistory.unshift(orderRecord);
-            dailyRevenue += total;
-            
-            orders[currentTable] = [];
-            saveData();
-            
-            updateRevenueDisplays();
-            renderOrder();
-            renderTables();
-            
-            alert(`✅ ${tableName}\nToplam: ${total.toFixed(0)} ₺`);
-        }
+function deleteSingleOrder(id){
+orderHistory=orderHistory.filter(o=>o.id!==id);
+save();
+renderReports();
+updateRevenue();
+}
 
-        function openReportsModal() {
-            document.getElementById('reportsModal').classList.add('active');
-            updateReports();
-        }
+function clearAllOrders(){
+if(!confirm("Hepsi silinsin mi?"))return;
+orderHistory=[];
+dailyRevenue=0;
+save();
+renderReports();
+updateRevenue();
+}
 
-        function closeReportsModal() {
-            document.getElementById('reportsModal').classList.remove('active');
-        }
+renderTables();
+renderProducts();
+updateRevenue();
 
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.report-content').forEach(content => content.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            document.getElementById(tab + 'Report').classList.add('active');
-            
-            updateReports();
-        }
-
-        function updateReports() {
-            const today = new Date().toDateString();
-            const oneWeekAgo = new Date();
-            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-            
-            const dailyOrders = orderHistory.filter(order => 
-                new Date(order.date).toDateString() === today
-            );
-            const dailyTotal = dailyOrders.reduce((sum, order) => sum + order.total, 0);
-            
-            document.getElementById('reportDailyTotal').textContent = dailyTotal.toFixed(0) + ' ₺';
-            document.getElementById('reportDailyCount').textContent = dailyOrders.length;
-            renderOrdersList(dailyOrders, 'dailyOrdersList');
-            
-            const weeklyOrders = orderHistory.filter(order => 
-                new Date(order.date) >= oneWeekAgo
-            );
-            const weeklyTotal = weeklyOrders.reduce((sum, order) => sum + order.total, 0);
-            
-            document.getElementById('reportWeeklyTotal').textContent = weeklyTotal.toFixed(0) + ' ₺';
-            document.getElementById('reportWeeklyCount').textContent = weeklyOrders.length;
-            renderOrdersList(weeklyOrders, 'weeklyOrdersList');
-            
-            const allTotal = orderHistory.reduce((sum, order) => sum + order.total, 0);
-            document.getElementById('reportAllTotal').textContent = allTotal.toFixed(0) + ' ₺';
-            document.getElementById('reportAllCount').textContent = orderHistory.length;
-            renderOrdersList(orderHistory, 'allOrdersList');
-        }
-
-        function renderOrdersList(orders, containerId) {
-            const container = document.getElementById(containerId);
-            
-            if (orders.length === 0) {
-                container.innerHTML = '<div class="no-data">Kayıt yok</div>';
-                return;
-            }
-            
-            container.innerHTML = orders.map(order => `
-                <div class="order-record">
-                    <button class="delete-order-btn" onclick="deleteSingleOrder(${order.id})">×</button>
-                    <div class="order-record-header">
-                        <h4>${order.tableName}</h4>
-                        <span class="date">${order.formattedDate}</span>
-                    </div>
-                    <div class="order-record-items">
-                        ${order.items.map(item => `${item.name}(${item.quantity})`).join(', ')}
-                    </div>
-                    <div class="order-record-total">${order.total.toFixed(0)} ₺</div>
-                </div>
-            `).join('');
-        }
-
-        function deleteSingleOrder(orderId) {
-            if (!confirm('Sipariş silinsin mi?')) return;
-            
-            const orderIndex = orderHistory.findIndex(o => o.id === orderId);
-            if (orderIndex > -1) {
-                const deletedOrder = orderHistory[orderIndex];
-                orderHistory.splice(orderIndex, 1);
-                
-                const today = new Date().toDateString();
-                if (new Date(deletedOrder.date).toDateString() === today) {
-                    dailyRevenue = Math.max(0, dailyRevenue - deletedOrder.total);
-                }
-                
-                saveData();
-                updateRevenueDisplays();
-                updateReports();
-            }
-        }
-
-        function clearDailyOrders() {
-            const today = new Date().toDateString();
-            const todayOrders = orderHistory.filter(o => new Date(o.date).toDateString() === today);
-            
-            if (todayOrders.length === 0) return;
-            
-            if (confirm(`${todayOrders.length} sipariş silinsin mi?`)) {
-                orderHistory = orderHistory.filter(o => new Date(o.date).toDateString() !== today);
-                dailyRevenue = 0;
-                saveData();
-                updateRevenueDisplays();
-                updateReports();
-            }
-        }
-
-        function clearWeeklyOrders() {
-            const oneWeekAgo = new Date();
-            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-            
-            const weeklyOrders = orderHistory.filter(o => new Date(o.date) >= oneWeekAgo);
-            
-            if (weeklyOrders.length === 0) return;
-            
-            if (confirm(`${weeklyOrders.length} sipariş silinsin mi?`)) {
-                orderHistory = orderHistory.filter(o => new Date(o.date) < oneWeekAgo);
-                dailyRevenue = 0;
-                saveData();
-                updateRevenueDisplays();
-                updateReports();
-            }
-        }
-
-        function clearAllOrders() {
-            if (orderHistory.length === 0) return;
-            
-            if (confirm(`TÜM ${orderHistory.length} sipariş silinsin mi?`)) {
-                orderHistory = [];
-                dailyRevenue = 0;
-                saveData();
-                updateRevenueDisplays();
-                updateReports();
-            }
-        }
-
-        function openProductModal() {
-            document.getElementById('productModal').classList.add('active');
-            renderProductList();
-        }
-
-        function closeProductModal() {
-            document.getElementById('productModal').classList.remove('active');
-        }
-
-        function renderProductList() {
-            const container = document.getElementById('productList');
-            container.innerHTML = '';
-            
-            products.forEach((product, index) => {
-                const div = document.createElement('div');
-                div.className = 'product-list-item';
-                div.innerHTML = `
-                    <div>
-                        <h4>${product.name}</h4>
-                        <span>${product.price.toFixed(0)} ₺</span>
-                    </div>
-                    <div class="product-actions">
-                        <button class="icon-btn edit-btn" onclick="editProduct(${index})">✎</button>
-                        <button class="icon-btn delete-btn" onclick="deleteProduct(${index})">🗑</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function addProduct() {
-            const name = document.getElementById('newProductName').value.trim();
-            const price = parseFloat(document.getElementById('newProductPrice').value);
-            
-            if (!name || isNaN(price) || price < 0) {
-                alert('Geçersiz değer!');
-                return;
-            }
-            
-            const maxId = Math.max(...products.map(p => p.id), 0);
-            products.push({ id: maxId + 1, name: name, price: price });
-            
-            document.getElementById('newProductName').value = '';
-            document.getElementById('newProductPrice').value = '';
-            
-            saveData();
-            renderProducts();
-            renderProductList();
-        }
-
-        function editProduct(index) {
-            const product = products[index];
-            document.getElementById('editProductId').value = index;
-            document.getElementById('editProductName').value = product.name;
-            document.getElementById('editProductPrice').value = product.price;
-            document.getElementById('editModal').classList.add('active');
-        }
-
-        function saveEditProduct() {
-            const index = parseInt(document.getElementById('editProductId').value);
-            const name = document.getElementById('editProductName').value.trim();
-            const price = parseFloat(document.getElementById('editProductPrice').value);
-            
-            if (!name || isNaN(price) || price < 0) {
-                alert('Geçersiz değer!');
-                return;
-            }
-            
-            products[index].name = name;
-            products[index].price = price;
-            
-            saveData();
-            renderProducts();
-            renderProductList();
-            closeEditModal();
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('active');
-        }
-
-        function deleteProduct(index) {
-            if (confirm('Ürün silinsin mi?')) {
-                products.splice(index, 1);
-                saveData();
-                renderProducts();
-                renderProductList();
-            }
-        }
-
-        function resetDailyRevenue() {
-            if (confirm('Ciro sıfırlansın mı?')) {
-                dailyRevenue = 0;
-                saveData();
-                updateRevenueDisplays();
-            }
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-            }
-        }
-    </script>
+</script>
 </body>
 </html>
